@@ -1,0 +1,183 @@
+{
+ "captured_at": "2026-10-11T20:00:57+00:00",
+ "models": {
+  "aifs": "ecmwf_aifs025_single",
+  "ifs": "ecmwf_ifs025",
+  "gfs": "gfs_global",
+  "icon": "icon_global",
+  "nbm": "ncep_nbm_conus"
+ },
+ "rows": [
+  {
+   "station": "NY",
+   "day": "2026-10-12",
+   "aifs": 70.4,
+   "ifs": 71.0,
+   "gfs": 75.0,
+   "icon": 74.3,
+   "nbm": 71.2
+  },
+  {
+   "station": "CHI",
+   "day": "2026-10-12",
+   "aifs": 81.4,
+   "ifs": 81.6,
+   "gfs": 86.4,
+   "icon": 86.7,
+   "nbm": 83.6
+  },
+  {
+   "station": "MIA",
+   "day": "2026-10-12",
+   "aifs": 86.1,
+   "ifs": 88.1,
+   "gfs": 93.5,
+   "icon": 91.1,
+   "nbm": 89.0
+  },
+  {
+   "station": "AUS",
+   "day": "2026-10-12",
+   "aifs": 87.3,
+   "ifs": 91.7,
+   "gfs": 87.1,
+   "icon": 90.1,
+   "nbm": 89.9
+  },
+  {
+   "station": "LAX",
+   "day": "2026-10-12",
+   "aifs": 67.0,
+   "ifs": 65.8,
+   "gfs": 66.5,
+   "icon": 68.1,
+   "nbm": 64.7
+  },
+  {
+   "station": "DEN",
+   "day": "2026-10-12",
+   "aifs": 79.2,
+   "ifs": 81.8,
+   "gfs": 78.7,
+   "icon": 79.7,
+   "nbm": 80.5
+  },
+  {
+   "station": "PHIL",
+   "day": "2026-10-12",
+   "aifs": 72.7,
+   "ifs": 73.5,
+   "gfs": 74.0,
+   "icon": 73.9,
+   "nbm": 72.8
+  },
+  {
+   "station": "ATL",
+   "day": "2026-10-12",
+   "aifs": 81.1,
+   "ifs": 81.0,
+   "gfs": 85.6,
+   "icon": 80.6,
+   "nbm": 81.6
+  },
+  {
+   "station": "BOS",
+   "day": "2026-10-12",
+   "aifs": 65.3,
+   "ifs": 66.4,
+   "gfs": 65.0,
+   "icon": 68.8,
+   "nbm": 66.3
+  },
+  {
+   "station": "DAL",
+   "day": "2026-10-12",
+   "aifs": 85.4,
+   "ifs": 89.1,
+   "gfs": 88.4,
+   "icon": 89.2,
+   "nbm": 89.6
+  },
+  {
+   "station": "DC",
+   "day": "2026-10-12",
+   "aifs": 73.7,
+   "ifs": 75.6,
+   "gfs": 74.8,
+   "icon": 73.5,
+   "nbm": 72.7
+  },
+  {
+   "station": "LV",
+   "day": "2026-10-12",
+   "aifs": 66.7,
+   "ifs": 68.5,
+   "gfs": 70.9,
+   "icon": 71.2,
+   "nbm": 68.7
+  },
+  {
+   "station": "MIN",
+   "day": "2026-10-12",
+   "aifs": 74.8,
+   "ifs": 79.6,
+   "gfs": 77.6,
+   "icon": 78.8,
+   "nbm": 81.0
+  },
+  {
+   "station": "NOLA",
+   "day": "2026-10-12",
+   "aifs": 82.4,
+   "ifs": 84.7,
+   "gfs": 90.5,
+   "icon": 86.2,
+   "nbm": 87.5
+  },
+  {
+   "station": "OKC",
+   "day": "2026-10-12",
+   "aifs": 86.0,
+   "ifs": 88.0,
+   "gfs": 87.1,
+   "icon": 88.5,
+   "nbm": 89.1
+  },
+  {
+   "station": "PHX",
+   "day": "2026-10-12",
+   "aifs": 79.9,
+   "ifs": 77.6,
+   "gfs": 83.7,
+   "icon": 79.0,
+   "nbm": 78.9
+  },
+  {
+   "station": "SATX",
+   "day": "2026-10-12",
+   "aifs": 88.4,
+   "ifs": 92.3,
+   "gfs": 87.6,
+   "icon": 89.5,
+   "nbm": 90.5
+  },
+  {
+   "station": "SEA",
+   "day": "2026-10-12",
+   "aifs": 60.5,
+   "ifs": 60.1,
+   "gfs": 62.7,
+   "icon": 59.9,
+   "nbm": 61.4
+  },
+  {
+   "station": "SFO",
+   "day": "2026-10-12",
+   "aifs": 66.6,
+   "ifs": 68.6,
+   "gfs": 69.8,
+   "icon": 68.6,
+   "nbm": 66.7
+  }
+ ]
+}
