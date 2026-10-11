@@ -43,6 +43,25 @@ The learned model is worse than physics as it comes out of the box and better on
 and no entry beats the market that prices the same outcome. Round 1 tests whether this holds
 on inputs captured live. Full output: `results/round0_dry_run.json`.
 
+## Task 2 dry run: foundation models vs copying the last price
+
+Kalshi's daily ladders on the S&P 500, Nasdaq-100, EUR/USD, USD/JPY, WTI, Brent, gold, silver,
+copper and natural gas (2,609 ladders in Yahoo's two-year hourly window). Entries see the
+underlying's last 512 hourly closes at the read. Zero-shot, as released. Log score per ladder
+minus the copy baseline (a lognormal at the last price, no drift), 95% date-block CIs:
+
+| Entry | 24 h before close (903) | 6 h before close (1,706) |
+| --- | --- | --- |
+| Chronos-Bolt small | -0.046 [-0.100, +0.010] | -0.028 [-0.069, +0.010] |
+| Chronos-Bolt base | -0.072 [-0.120, -0.020] | -0.020 [-0.056, +0.018] |
+| TimesFM 2.5 | -0.059 [-0.103, -0.011] | -0.017 [-0.062, +0.026] |
+| each model's median, copy's spread | -0.04 to -0.07, all below zero | -0.04 to -0.05, all below zero |
+
+None beats copying. Their median moves point the right way 49 to 50% of the time, and using
+their direction makes every one worse, so what they add to copying is noise. The copy baseline
+itself beats the bid-priced market (+1.30 at 24 h, +0.21 at 6 h) but trades to about zero after
+fees, as in isotherm §49. Output: `results/prices_dry_run.json`.
+
 ## Layout
 
 - `forward/`: stations, truth (NWS CLI), Open-Meteo inputs, Kalshi ladders, entries, metrics
