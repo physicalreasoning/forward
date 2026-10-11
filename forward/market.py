@@ -84,6 +84,7 @@ def ladders(series: str, start: str, end: str) -> pd.DataFrame:
                     "bid": bid,
                     "ask": ask,
                     "yes": kalshi.result_yes(m),
+                    "settle": kalshi.to_float(m.get("expiration_value")),
                 }
             )
     df = pd.DataFrame(rows)
