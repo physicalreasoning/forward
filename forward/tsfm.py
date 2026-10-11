@@ -11,6 +11,13 @@ from __future__ import annotations
 
 import numpy as np
 
+# Hugging Face revisions, pinned so an upstream update cannot change a frozen entry.
+REVISION = {
+    "amazon/chronos-bolt-small": "772f3d25d38aec6d914c8949dab4462e2d46f5d8",
+    "amazon/chronos-bolt-base": "5d9f166d69f47aef3401367a7b842e78fe97b121",
+    "google/timesfm-2.5-200m-pytorch": "1d952420fba87f3c6dee4f240de0f1a0fbc790e3",
+}
+
 Z90 = 2.5631  # distance between the 10th and 90th percentiles of a standard normal
 
 
@@ -26,7 +33,9 @@ class Chronos:
         from chronos import BaseChronosPipeline
 
         self.name = name
-        self.p = BaseChronosPipeline.from_pretrained(name, device_map="cpu", torch_dtype=torch.float32)
+        self.p = BaseChronosPipeline.from_pretrained(
+            name, revision=REVISION[name], device_map="cpu", torch_dtype=torch.float32
+        )
 
     def predict(self, contexts, horizons):
         import torch
@@ -48,7 +57,7 @@ class TimesFM:
         import timesfm
 
         self.name = name
-        self.m = timesfm.TimesFM_2p5_200M_torch.from_pretrained(name)
+        self.m = timesfm.TimesFM_2p5_200M_torch.from_pretrained(name, revision=REVISION[name])
         self.m.compile(
             timesfm.ForecastConfig(
                 max_context=512,
