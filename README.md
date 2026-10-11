@@ -25,6 +25,7 @@ exist because a better score is not the same as a better decision
 | --- | --- | --- | --- |
 | 0 | Station highs, dry run (archive inputs, not sealed) | 2026-07-01 to 2026-10-09 | pipeline check |
 | 1 | Station highs, 19 Kalshi climate stations | 2026-11-01 to 2026-12-26 | spec in [ROUND1.md](ROUND1.md), freezes 2026-10-31 |
+| 2 | Station highs again; Kalshi price ladders vs copying the last price | 2027-01-04 to 2027-02-28 | draft in [ROUND2.md](ROUND2.md), freezes 2027-01-03 |
 
 ## Round 0 (dry run, not sealed)
 
