@@ -49,8 +49,7 @@ model gains from a longer record.
 | emos-all | ridge on all five models, by station | residual SD by station and month |
 
 The market (Kalshi's ladder at the read, bid-priced and mid) is a reference, not an entry.
-Outside entries are welcome until the freeze: send code or parameters, and their hash goes into
-`frozen/round1.json`.
+The round scores only the entries above; no outside entries.
 
 ## Columns reported for every entry
 

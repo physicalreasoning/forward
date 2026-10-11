@@ -31,7 +31,7 @@ tests (H1 to H4) are run again; a result that holds in both rounds counts for mo
 | each learned model's "-centre" | its median with the copy baseline's spread: does it know where the price goes? |
 
 A learned entry's 10th, 50th and 90th percentiles at the close are read as a lognormal (median,
-and the 10-to-90 width). Outside entries are welcome until the freeze.
+and the 10-to-90 width). The round scores only the entries above.
 
 ### Pre-registered tests (24 h primary, 6 h secondary)
 
