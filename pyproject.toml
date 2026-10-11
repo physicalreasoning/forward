@@ -1,0 +1,22 @@
+[project]
+name = "forward"
+version = "0.0.1"
+description = "Sealed forward tests for world models: frozen before the round, scored on outcomes that resolve after it."
+requires-python = ">=3.11"
+dependencies = [
+    "isotherm @ git+https://github.com/physicalreasoning/isotherm",
+    "numpy>=2.0",
+    "pandas>=2.2",
+    "pyarrow>=17",
+    "scipy>=1.13",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.ruff]
+line-length = 110
