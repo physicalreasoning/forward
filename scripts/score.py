@@ -19,7 +19,8 @@ import json
 import numpy as np
 import pandas as pd
 
-from forward import ROOT, entries, metrics
+from forward import ROOT, entries, metrics, truth
+from forward import ledger as ledger_mod
 from forward.history import fit_table
 from forward.market import ladders
 from forward.stations import STATIONS
@@ -150,16 +151,68 @@ def dry_run(start: str, end: str) -> dict:
     return res
 
 
+def _sha(path) -> str:
+    return hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
+
+
+def check_frozen(n: int) -> dict:
+    """Load a frozen round, refusing if the spec, any scoring file or the parameters changed."""
+    fz = json.loads((ROOT / "frozen" / f"round{n}.json").read_text())
+    changed = [p for p, h in {fz["spec"]: fz["spec_sha256"], **fz["code_sha256"]}.items() if _sha(p) != h]
+    blob = json.dumps(fz["params"], sort_keys=True)
+    if hashlib.sha256(blob.encode()).hexdigest() != fz["params_sha256"]:
+        changed.append("params")
+    if changed:
+        raise SystemExit(f"changed since the freeze: {changed}")
+    return fz
+
+
+def sealed(n: int, ledger_dir) -> dict:
+    fz = check_frozen(n)
+    start, end = fz["window"]
+    fc, log = ledger_mod.load(ledger_dir, start, end)
+    lad = pd.concat([ladders(st.series, start, end) for st in STATIONS.values()], ignore_index=True)
+    # Truth: the CLI high, refetched now; Kalshi's settlement value where the CLI is missing.
+    years = range(pd.Timestamp(start).year, pd.Timestamp(end).year + 1)
+    cli = truth.all_highs(STATIONS, years)
+    k2s = {st.series: k for k, st in STATIONS.items()}
+    kal = lad.dropna(subset=["settle"]).groupby(["series", "day"])["settle"].first().reset_index()
+    kal = kal.assign(station=kal["series"].map(k2s)).rename(columns={"settle": "high"})
+    t = cli.set_index(["station", "day"])["high"]
+    t = t.combine_first(kal.set_index(["station", "day"])["high"]).rename("high").reset_index()
+    in_cli = pd.MultiIndex.from_frame(t[["station", "day"]]).isin(cli.set_index(["station", "day"]).index)
+    n_kalshi = int((~in_cli).sum())
+    prev = t.assign(day=t["day"] + pd.Timedelta(days=1)).rename(columns={"high": "prev_high"})
+    d = fc.merge(t, on=["station", "day"], how="left").merge(prev, on=["station", "day"], how="left")
+    res = score(d, fz["params"], lad)
+    res.update(
+        {
+            "kind": f"sealed round {n}",
+            "window": [start, end],
+            "inputs": "ledger",
+            "ledger": log,
+            "truth_from_kalshi": n_kalshi,
+            "complete": bool(pd.Timestamp.now() > pd.Timestamp(end) + pd.Timedelta(days=2)),
+            "params_sha256": fz["params_sha256"],
+        }
+    )
+    if not res["complete"]:
+        res["tests"] = {"note": "window not settled; no verdicts before it is"}
+    return res
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", nargs=2, metavar=("START", "END"))
     ap.add_argument("--round", type=int)
+    ap.add_argument("--ledger", default=str(ROOT.parent / "forward-ledger" / "ledger"))
     a = ap.parse_args()
     if a.dry_run:
         res = dry_run(*a.dry_run)
         out = ROOT / "results" / "round0_dry_run.json"
     else:
-        raise SystemExit("sealed scoring is added with the Round 1 freeze")
+        res = sealed(a.round, a.ledger)
+        out = ROOT / "results" / f"round{a.round}.json"
     out.parent.mkdir(exist_ok=True)
     out.write_text(json.dumps(res, indent=1, default=str))
     rows = [
@@ -185,7 +238,9 @@ def main():
                 )
             )
     for k, v in res["tests"].items():
-        if "verdict" in v:
+        if not isinstance(v, dict):
+            print(k, v)
+        elif "verdict" in v:
             m = v.get("diff", v.get("mean"))
             print("{}: {:+.3f} [{:+.3f}, {:+.3f}] {}".format(k, m, *v["ci"], v["verdict"]))
         else:
