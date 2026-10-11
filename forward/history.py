@@ -6,10 +6,11 @@ import pandas as pd
 
 from . import DATA
 from .openmeteo import MODELS
+from .truth import HISTORY
 
 
 def fit_table(cutoff: str) -> pd.DataFrame:
-    truth = pd.read_parquet(max(DATA.glob("truth_*.parquet")))
+    truth = pd.read_parquet(HISTORY)
     truth["day"] = pd.to_datetime(truth["day"])
     truth = truth[truth["day"] <= pd.Timestamp(cutoff)]
     fc = pd.read_parquet(DATA / "forecasts.parquet")

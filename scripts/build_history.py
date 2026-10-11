@@ -18,7 +18,7 @@ END = str((pd.Timestamp.now() - pd.Timedelta(days=1)).date())
 
 
 def main():
-    t = truth.all_highs(STATIONS, range(2010, pd.Timestamp.now().year + 1))
+    t = truth.all_highs(STATIONS, range(2010, pd.Timestamp.now().year + 1), save=True)
     print("truth", len(t), "station-days", flush=True)
     parts = []
     for k, st in STATIONS.items():

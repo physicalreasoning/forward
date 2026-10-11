@@ -20,10 +20,13 @@ def highs(st, years) -> pd.Series:
     return s[~s.index.duplicated(keep="last")].sort_index().rename("high")
 
 
-def all_highs(stations, years) -> pd.DataFrame:
-    f = DATA / f"truth_{min(years)}_{max(years)}.parquet"
+HISTORY = DATA / "truth.parquet"  # the fitting history written by build_history.py
+
+
+def all_highs(stations, years, save: bool = False) -> pd.DataFrame:
     rows = [highs(st, years).to_frame().assign(station=k) for k, st in stations.items()]
     df = pd.concat(rows).rename_axis("day").reset_index()
-    DATA.mkdir(parents=True, exist_ok=True)
-    df.to_parquet(f, index=False)
+    if save:
+        DATA.mkdir(parents=True, exist_ok=True)
+        df.to_parquet(HISTORY, index=False)
     return df
