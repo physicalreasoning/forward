@@ -18,8 +18,7 @@ import json
 from forward import ROOT, entries
 from forward.history import fit_table
 
-ROUNDS = {1: {"cutoff": "2026-10-30", "window": ["2026-11-01", "2026-12-26"], "spec": "ROUND1.md"}}
-CODE = [
+STATION_CODE = [
     "forward/entries.py",
     "forward/metrics.py",
     "forward/openmeteo.py",
@@ -27,8 +26,30 @@ CODE = [
     "forward/truth.py",
     "forward/history.py",
     "forward/stations.py",
+    "forward/ledger.py",
     "scripts/score.py",
 ]
+PRICE_CODE = [
+    "forward/prices.py",
+    "forward/tsfm.py",
+    "forward/price_ladders.py",
+    "scripts/score_prices.py",
+]
+ROUNDS = {
+    1: {
+        "cutoff": "2026-10-30",
+        "window": ["2026-11-01", "2026-12-26"],
+        "spec": "ROUND1.md",
+        "code": STATION_CODE,
+    },
+    2: {
+        "cutoff": "2027-01-02",
+        "window": ["2027-01-04", "2027-02-28"],
+        "spec": "ROUND2.md",
+        "code": STATION_CODE + PRICE_CODE,
+    },
+}
+CODE = STATION_CODE  # kept for scripts/rehearse.py
 
 
 def sha(path) -> str:
@@ -48,9 +69,9 @@ def main():
     rec = {
         "round": n,
         "frozen_at": dt.datetime.now(dt.UTC).isoformat(timespec="seconds"),
-        **r,
+        **{k: v for k, v in r.items() if k != "code"},
         "spec_sha256": sha(r["spec"]),
-        "code_sha256": {p: sha(p) for p in CODE},
+        "code_sha256": {p: sha(p) for p in r["code"]},
         "params_sha256": hashlib.sha256(blob.encode()).hexdigest(),
         "params": json.loads(blob),
     }
