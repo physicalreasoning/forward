@@ -26,7 +26,8 @@ the prediction market that prices the same outcome?
 - **Model forecasts:** each model's latest run at the read, from Open-Meteo, hourly 2 m
   temperature, maximum over D's local hours (at least 20 hours present). Captured by
   `scripts/capture.py` and committed to the `ledger` branch at the read; a day without a
-  ledger entry is dropped for every entry.
+  ledger entry is dropped for every entry. A capture counts only if it was taken before 22:00 UTC
+  on D-1 (`forward/ledger.py`); if a station-day has two, the earlier one counts.
 - **Station history:** CLI highs through D-1. D-1's report is not final at the read; using it
   gives the copy baseline a small advantage, which only makes beating it harder.
 - **Fitting data:** model archives (Open-Meteo previous-day runs, AIFS from 2025, others from
@@ -79,5 +80,5 @@ Every result is published, including failures.
 
 ## Scoring
 
-After 2026-12-28, `uv run scripts/score.py --round 1`. It checks both hashes, reads only the
+After 2026-12-28, `uv run scripts/score.py --round 1`. It checks the spec, code and parameter hashes, reads only the
 ledger for inputs, refetches truth and ladders, and writes `results/round1.json`.
