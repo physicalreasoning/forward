@@ -18,12 +18,16 @@ from __future__ import annotations
 import argparse
 import json
 import pathlib
+import sys
 
 import numpy as np
 import pandas as pd
 
-from forward import ROOT, metrics, prices
+from forward import ROOT, metrics, price_ladders, prices
 from forward.tsfm import Chronos, TimesFM
+
+sys.path.insert(0, str(pathlib.Path(__file__).parent))
+from score import check_frozen
 
 MIN_CONTEXT = 256
 BATCH = 64
@@ -36,15 +40,15 @@ def market_level(pr, p):
     return p
 
 
-def build(raw: pathlib.Path):
+def build(frames: dict):
+    """frames: series -> market rows (isotherm bench layout). Prices are refetched from Yahoo."""
     probs = []
     for series, symbol in prices.SYMBOL.items():
-        f = raw / f"{series}.parquet"
-        if not f.exists():
+        if series not in frames or frames[series].empty:
             continue
         px = prices.hourly(symbol)
         ts, cl = px["ts"].to_numpy(), px["close"].to_numpy(float)
-        for pr in prices.problems(series, pd.read_parquet(f)):
+        for pr in prices.problems(series, frames[series]):
             ctx = prices.context(pr, ts, cl)
             h = prices.horizon_bars(pr, ts)
             if len(ctx) < MIN_CONTEXT or h < 1:
@@ -114,8 +118,17 @@ def summarise(probs, scores, pnl):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--raw", type=pathlib.Path, default=pathlib.Path.home() / "isotherm/data/bench/raw")
+    ap.add_argument("--round", type=int, help="sealed: frozen hashes, ladders settling in the window")
     a = ap.parse_args()
-    probs = build(a.raw)
+    if a.round:
+        fz = check_frozen(a.round)
+        start, end = fz["window"]
+        frames = {s: price_ladders.fetch(s, start, end) for s in prices.SYMBOL}
+        kind, out = f"sealed round {a.round}", ROOT / "results" / f"round{a.round}_prices.json"
+    else:
+        frames = {s: pd.read_parquet(f) for s in prices.SYMBOL if (f := a.raw / f"{s}.parquet").exists()}
+        kind, out = "dry run (not sealed)", ROOT / "results" / "prices_dry_run.json"
+    probs = build(frames)
     print("problems", len(probs), flush=True)
     models = {
         "chronos-bolt-small": lambda: Chronos("amazon/chronos-bolt-small"),
@@ -162,7 +175,7 @@ def main():
             for d, p in zip(ds, probs, strict=True)
         ]
         pnl[e] = np.array(rows).T
-    res = {"kind": "dry run (not sealed)", "direction": direction}
+    res = {"kind": kind, "direction": direction}
     for lead in prices.LEADS:
         idx = [i for i, p in enumerate(probs) if p["lead"] == lead]
         sub = [probs[i] for i in idx]
@@ -179,7 +192,6 @@ def main():
                 {e: v[j] for e, v in scores.items()},
                 {e: v[:, j] for e, v in pnl.items()},
             )
-    out = ROOT / "results" / "prices_dry_run.json"
     out.write_text(json.dumps(res, indent=1, default=str))
     for lead in prices.LEADS:
         P = res[lead]["pooled"]
