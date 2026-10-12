@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use forward, please cite it as below."
+title: "forward: Sealed forward tests for world models"
+type: software
+authors:
+  - name: "Physical Reasoning"
+repository-code: "https://github.com/physicalreasoning/forward"
+license: Apache-2.0
+version: "0.1.0"
+date-released: "2026-10-12"
+keywords:
+  - world models
+  - forecasting
+  - evaluation
+  - proper scoring rules
+  - calibration
+  - prediction markets
