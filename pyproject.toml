@@ -15,6 +15,9 @@ dependencies = [
     "scipy>=1.13",
 ]
 
+[project.scripts]
+forward = "forward.cli:main"
+
 [project.optional-dependencies]
 tsfm = [
     "chronos-forecasting>=2.3.2",
