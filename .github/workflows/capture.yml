@@ -1,0 +1,48 @@
+name: capture
+# Backup for the daily capture (scripts/capture.py), which normally runs on a maintainer's
+# machine at 20:00 UTC. Several tries before the 22:00 UTC deadline, because GitHub drops some
+# scheduled runs under load; each try exits at once if the day is already on the ledger branch.
+on:
+  schedule:
+    - cron: "12,27,42,57 20 * * *"
+    - cron: "12,27,42 21 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: capture
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - name: Check out the ledger
+        run: git fetch -q origin ledger && git worktree add -q ledger-wt FETCH_HEAD
+      - name: Capture unless today is already on the ledger
+        id: cap
+        run: |
+          day=$(date -u +%F)
+          echo "day=$day" >> "$GITHUB_OUTPUT"
+          if [ -f "ledger-wt/ledger/$day.json" ]; then
+            echo "already captured $day"; echo "skip=1" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          uv sync --locked
+          uv run scripts/capture.py --out ledger-wt/ledger
+      - name: Commit and push (the earlier capture wins a race)
+        if: steps.cap.outputs.skip != '1'
+        run: |
+          cd ledger-wt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898299+github-actions[bot]@users.noreply.github.com"
+          git add "ledger/${{ steps.cap.outputs.day }}.json"
+          git commit -qm "Capture ${{ steps.cap.outputs.day }} (backup run)"
+          if ! git push -q origin HEAD:refs/heads/ledger; then
+            git fetch -q origin ledger
+            if git cat-file -e "FETCH_HEAD:ledger/${{ steps.cap.outputs.day }}.json" 2>/dev/null; then
+              echo "another capture of this day landed first; keeping it"
+            else
+              git rebase -q FETCH_HEAD && git push -q origin HEAD:refs/heads/ledger
+            fi
+          fi
