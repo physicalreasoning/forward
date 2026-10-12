@@ -13,22 +13,22 @@ MIN = 60_000
 
 
 def test_executions_fill_the_queue_ahead_first_then_us():
-    ts, vs = fills.simulate([(1, EXEC, 3), (2, EXEC, 4)], ahead=5, level=5)
+    ts, vs, _ = fills.simulate([(1, EXEC, 3), (2, EXEC, 4)], ahead=5, level=5)
     assert list(ts) == [2] and list(vs) == [2]
     assert fills.fill_time(ts, vs, 2) == 2
     assert fills.fill_time(ts, vs, 3) == -1
 
 
 def test_orders_added_behind_us_do_not_delay_us():
-    ts, vs = fills.simulate([(1, ADD, 100), (2, EXEC, 6)], ahead=5, level=5)
+    ts, vs, _ = fills.simulate([(1, ADD, 100), (2, EXEC, 6)], ahead=5, level=5)
     assert list(vs) == [1]
 
 
 def test_cancellations_pro_rata_versus_back_of_queue():
     # 10 ahead of us, 10 join behind, 10 cancel, then 10 execute.
     ev = [(1, ADD, 10), (2, CANCEL, 10), (3, EXEC, 10)]
-    _, pro = fills.simulate(ev, ahead=10, level=10, rule="pro_rata")
-    _, back = fills.simulate(ev, ahead=10, level=10, rule="back")
+    _, pro, _ = fills.simulate(ev, ahead=10, level=10, rule="pro_rata")
+    _, back, _ = fills.simulate(ev, ahead=10, level=10, rule="back")
     assert pro[-1] == pytest.approx(5)  # half the cancellations were ahead of us
     assert len(back) == 0  # all from behind: still 10 ahead, all executed before us
 
@@ -36,12 +36,12 @@ def test_cancellations_pro_rata_versus_back_of_queue():
 def test_with_nobody_behind_us_both_rules_agree():
     ev = [(1, CANCEL, 4), (2, EXEC, 8)]
     for rule in fills.RULES:
-        _, vs = fills.simulate(ev, ahead=10, level=10, rule=rule)
+        _, vs, _ = fills.simulate(ev, ahead=10, level=10, rule=rule)
         assert vs[-1] == pytest.approx(2)
 
 
 def test_a_trade_through_our_price_reaches_us_whatever_the_queue():
-    ts, vs = fills.simulate([(5, THROUGH, 7)], ahead=50, level=50)
+    ts, vs, _ = fills.simulate([(5, THROUGH, 7)], ahead=50, level=50)
     assert list(ts) == [5] and list(vs) == [7]
 
 
@@ -55,7 +55,8 @@ def _book():
 
     t0 = 40 min. Then: 41 min the 5 at 40c trade; 42 min 4 more join at 40c; 43 min 3 of those
     trade; 46 min a NO bid at 57c (YES offer 43c); 49 min the last 1 at 40c cancels; 50 min a NO
-    bid of 20 at 60c rests (a YES offer at 40c, which would cross a YES bid at 40c or above).
+    bid of 20 at 60c rests (a YES offer at 40c, which would cross a YES bid at 40c or above);
+    55 min one contract trades at 39c.
     """
     p = fills.PU
     rows = [
@@ -71,12 +72,22 @@ def _book():
         (46 * MIN, DELTA, NO, 57 * p, 10.0),
         (49 * MIN, DELTA, YES, 40 * p, -1.0),
         (50 * MIN, DELTA, NO, 60 * p, 20.0),
+        (55 * MIN, DELTA, YES, 39 * p, -1.0),
+        (55 * MIN, TRADE, YES, 39 * p, 1.0),
         (240 * MIN, DELTA, YES, 20 * p, 1.0),  # keeps the record going past every horizon
     ]
     ev = pd.DataFrame(rows, columns=["recv", "kind", "side", "px", "qty"])
     ev = ev.assign(ts=ev["recv"], tk="KXHIGHTEST-26OCT12-B40.5")
     ev["tk"] = ev["tk"].astype("category")
     return fills.mark_exec(ev)
+
+
+def _samples_at(t0, gaps=None):
+    ev = _book()
+    t = ev["recv"].to_numpy()
+    gaps = fills.merge([(-(2**62), int(t[0])), (int(t[-1]), 2**62), *(gaps or [])])
+    df = pd.DataFrame(fills.market_samples("KXHIGHTEST-26OCT12-B40.5", ev.drop(columns=["tk"]), gaps))
+    return df[df["t0"] == t0].set_index(["side", "level", "size"]).sort_index()
 
 
 def _samples(gaps=None):
@@ -91,7 +102,7 @@ def _samples(gaps=None):
 def test_trades_are_matched_to_their_deltas():
     ev = _book()
     ex = ev[ev["exec"]]
-    assert list(ex["recv"]) == [41 * MIN, 43 * MIN]
+    assert list(ex["recv"]) == [41 * MIN, 43 * MIN, 55 * MIN]
     assert not ev.loc[ev["recv"] == 49 * MIN, "exec"].any()  # no trade: a cancellation
 
 
@@ -103,6 +114,7 @@ def test_hand_built_book_joining_the_best_bid():
     assert r.loc[1, "t_fill_pro_rata"] == 43 * MIN  # 5 ahead traded at 41, then 3 of 4 behind at 43
     assert r.loc[10, "t_fill_pro_rata"] == 50 * MIN  # 3 + the crossing 20 at 50
     assert r.loc[100, "t_fill_pro_rata"] == -1
+    assert list(r["how_pro_rata"]) == ["at_price", "cross", ""]
     # Mid 42.5 at the fill (best bid 40c, offer 45c), 41.5 five minutes later (offer 43c).
     assert r.loc[1, "move_pro_rata"] == pytest.approx(-1.0)
 
@@ -111,6 +123,7 @@ def test_hand_built_book_improving_and_behind_the_best():
     df = _samples()
     up = df.loc[(YES, 1)]  # 41c: alone; the trade at 40c would have hit us first
     assert up.loc[1, "queue"] == 0 and up.loc[1, "t_fill_pro_rata"] == 41 * MIN
+    assert up.loc[1, "how_pro_rata"] == "through"
     assert up.loc[10, "t_fill_pro_rata"] == 50 * MIN  # 5 + 3 through, then 20 crossing 59c+
     down = df.loc[(YES, -1)]  # 39c: 5 better and 3 ahead; nothing ever trades at or through 39c
     assert down.loc[1, "queue"] == 3 and down.loc[1, "better"] == 5
@@ -128,7 +141,12 @@ def test_no_side_orders_and_marketable_prices():
 def test_lookback_features_see_only_the_past():
     df = _samples()
     r = df.loc[(YES, 0, 1)]
-    assert r["n_exec"] == 0 and not r["crossed"]
+    assert r["n_exec"] == 0 and r["n_exec_at"] == 0 and not r["crossed"]
+    later = _samples_at(60 * MIN)  # best YES bid 39c; trades at 40c (41, 43 min) and 39c (55 min)
+    r = later.loc[(YES, 0, 1)]
+    assert r["price"] == 39 and r["n_exec"] == 3 and r["v_exec"] == 9
+    assert r["n_exec_at"] == 1 and r["v_exec_at"] == 1 and r["crossed"]
+    assert not later.loc[(YES, -1, 1), "crossed"]  # nothing traded at or below 38c
 
 
 def test_a_gap_cuts_the_labels_that_reach_it():

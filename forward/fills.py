@@ -56,7 +56,8 @@ COMMODITIES = ("KXWTI", "KXGOLDD", "KXSILVERD", "KXCOPPERD", "KXBRENTD", "KXNATG
 
 SUB, SNAP, LEVEL, DELTA, TRADE = 0, 1, 2, 3, 4  # row kinds
 YES, NO = 0, 1
-CANCEL, EXEC, ADD, THROUGH = 0, 1, 2, 3  # simulator events
+CANCEL, EXEC, ADD, THROUGH, CROSS = 0, 1, 2, 3, 4  # simulator events
+HOW = {EXEC: "at_price", THROUGH: "through", CROSS: "cross"}
 
 
 # Reading the recorder's files ---------------------------------------------------------------
@@ -246,16 +247,17 @@ def simulate(events, ahead: float, level: float, rule: str = "pro_rata"):
     """Cumulative volume that reaches our order, assuming it were unboundedly large.
 
     events: (t, kind, qty) in arrival order, kind in CANCEL, EXEC, ADD (at our price, others'
-    orders), THROUGH (an execution at a worse price on our side, or a crossing order added on the
-    other side). ahead: others' size ahead of us at t0 (the whole level: we join at the back).
-    level: others' total size at our price. Returns (times, volumes), volume non-decreasing.
+    orders), THROUGH (an execution at a worse price on our side), CROSS (an order added on the
+    other side at a price that crosses ours). ahead: others' size ahead of us at t0 (the whole
+    level: we join at the back). level: others' total size at our price. Returns (times,
+    volumes, kinds) at each event that reached us; volume is non-decreasing.
 
     Our order of size q is completely filled at the first time the volume reaches q.
     """
     if rule not in RULES:
         raise ValueError(rule)
     a, lv, v = float(ahead), float(level), 0.0
-    ts, vs = [], []
+    ts, vs, ks = [], [], []
     for t, kind, q in events:
         before = v
         if kind == EXEC:
@@ -269,20 +271,28 @@ def simulate(events, ahead: float, level: float, rule: str = "pro_rata"):
             lv = max(lv - q, 0.0)
         elif kind == ADD:
             lv += q
-        elif kind == THROUGH:
+        elif kind in (THROUGH, CROSS):
             a = 0.0  # anyone left ahead at our price would have traded first
             v += q
         a = max(min(a, lv), 0.0)  # the queue ahead is never more than the level
         if v > before:
             ts.append(t)
             vs.append(v)
-    return np.array(ts, dtype=np.int64), np.array(vs, dtype=float)
+            ks.append(kind)
+    return np.array(ts, dtype=np.int64), np.array(vs, dtype=float), np.array(ks, dtype=np.int8)
 
 
 def fill_time(ts: np.ndarray, vs: np.ndarray, q: float) -> int:
     """First time the cumulative volume reaching us covers size q (-1 if never)."""
     i = int(np.searchsorted(vs, q - 1e-9, side="left"))
     return int(ts[i]) if i < len(ts) else -1
+
+
+def fill_how(ts: np.ndarray, vs: np.ndarray, ks: np.ndarray, q: float) -> str:
+    """What completed the fill of size q: an execution at our price after the queue ahead
+    cleared ("at_price"), an execution at a worse price ("through") or a crossing order ("cross")."""
+    i = int(np.searchsorted(vs, q - 1e-9, side="left"))
+    return HOW[int(ks[i])] if i < len(ts) else ""
 
 
 def window_events(arr: dict, i0: int, i1: int, side: int, p: int) -> list[tuple[int, int, float]]:
@@ -302,7 +312,7 @@ def window_events(arr: dict, i0: int, i1: int, side: int, p: int) -> list[tuple[
         elif through[j]:
             out.append((int(t[j]), THROUGH, -float(q[j])))
         else:
-            out.append((int(t[j]), THROUGH, float(q[j])))
+            out.append((int(t[j]), CROSS, float(q[j])))
     return out
 
 
@@ -396,7 +406,7 @@ def market_samples(tk: str, g: pd.DataFrame, gaps: np.ndarray) -> list[dict]:
             ex_lb, ca_lb = is_exec[lb] & own_lb, is_cancel[lb] & own_lb
             v_exec = float(-arr["qty"][lb][ex_lb].sum())
             v_cancel = float(-arr["qty"][lb][ca_lb].sum())
-            min_exec_px = int(arr["px"][lb][ex_lb].min()) if ex_lb.any() else FULL
+            ex_px, ex_q = arr["px"][lb][ex_lb], -arr["qty"][lb][ex_lb]
             depth = float(sum(books0[side].values()))
             ask = FULL - best[1 - side]  # lowest price we could pay without crossing
             for lvl in LEVELS:
@@ -407,6 +417,7 @@ def market_samples(tk: str, g: pd.DataFrame, gaps: np.ndarray) -> list[dict]:
                 better = float(sum(q for x, q in books0[side].items() if x > p))
                 evs = window_events(arr, i0, i1, side, p)
                 fills = {r: simulate(evs, level, level, r) for r in RULES}
+                at = ex_px <= p  # executions at or through our price in the lookback
                 base = {
                     "tk": tk,
                     "series": series_of(tk),
@@ -425,13 +436,16 @@ def market_samples(tk: str, g: pd.DataFrame, gaps: np.ndarray) -> list[dict]:
                     "v_exec": v_exec,
                     "v_cancel": v_cancel,
                     "n_exec_all": n_exec_all,
-                    "crossed": bool(min_exec_px <= p),
+                    "n_exec_at": int(at.sum()),
+                    "v_exec_at": float(ex_q[at].sum()),
+                    "crossed": bool(at.any()),
                 }
                 for q in SIZES:
                     row = {**base, "size": q}
                     for r in RULES:
-                        tf = fill_time(*fills[r], q)
+                        tf = fill_time(*fills[r][:2], q)
                         row[f"t_fill_{r}"] = tf
+                        row[f"how_{r}"] = fill_how(*fills[r], q)
                         ok = tf >= 0 and tf + MOVE_MS <= until
                         sign = 1 if side == YES else -1
                         row[f"move_{r}"] = sign * (mid_at(tf + MOVE_MS) - mid_at(tf)) if ok else math.nan
