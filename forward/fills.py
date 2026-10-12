@@ -22,9 +22,11 @@ The simulator's assumptions (docs/TASK3_FILLS.md has the reasoning and the limit
    ahead ("pro_rata", the primary labels) or only from behind us until the level is smaller
    than our position ("back", a lower bound on fills).
 4. Executions at our price fill the queue ahead first, then us. Executions on our side at a
-   worse price, and resting orders added on the other side that would cross our price, would
-   have traded with us first: all of their size reaches us.
-5. Nobody reacts to our order. This cannot be checked from the record and is the main limit.
+   worse price would have traded with us first: all of their size reaches us.
+5. An order added on the other side at a price that crosses ours would have traded with us
+   (primary), or would not have been sent at all, as if it were post-only (the "_no_cross"
+   variants, a lower bound).
+6. Nobody reacts to our order. This cannot be checked from the record and is the main limit.
 """
 
 from __future__ import annotations
@@ -52,6 +54,14 @@ MID_RANGE = (5, 95)  # cents; outside it the book is a settled tail
 SILENCE_MS = 60_000  # no message from any market for this long counts as a gap
 PAD_MS = 60_000  # a logged disconnect is detected up to a ping timeout after the link died
 RULES = ("pro_rata", "back")
+# Label variants: (cancellation rule, whether an order added on the other side at a crossing
+# price fills us). The first is the primary label; the others bound it.
+VARIANTS = {
+    "pro_rata": ("pro_rata", True),
+    "back": ("back", True),
+    "pro_rata_no_cross": ("pro_rata", False),
+    "back_no_cross": ("back", False),
+}
 COMMODITIES = ("KXWTI", "KXGOLDD", "KXSILVERD", "KXCOPPERD", "KXBRENTD", "KXNATGASD")
 
 SUB, SNAP, LEVEL, DELTA, TRADE = 0, 1, 2, 3, 4  # row kinds
@@ -335,7 +345,7 @@ def _mid(by: int, bn: int) -> float:
 
 def market_samples(tk: str, g: pd.DataFrame, gaps: np.ndarray) -> list[dict]:
     """Every action at every valid decision time of one market, with its features and its
-    counterfactual fill times under each cancellation rule.
+    counterfactual fill times under each label variant.
 
     A decision time t0 is valid if the market's book came from a snapshot taken before the
     lookback started, no gap touches [t0 - LOOKBACK, t0], both sides have bids and the mid is
@@ -416,7 +426,11 @@ def market_samples(tk: str, g: pd.DataFrame, gaps: np.ndarray) -> list[dict]:
                 level = books0[side].get(p, 0.0)
                 better = float(sum(q for x, q in books0[side].items() if x > p))
                 evs = window_events(arr, i0, i1, side, p)
-                fills = {r: simulate(evs, level, level, r) for r in RULES}
+                no_cross = [e for e in evs if e[1] != CROSS]
+                fills = {
+                    name: simulate(evs if cross else no_cross, level, level, rule)
+                    for name, (rule, cross) in VARIANTS.items()
+                }
                 at = ex_px <= p  # executions at or through our price in the lookback
                 base = {
                     "tk": tk,
@@ -442,10 +456,10 @@ def market_samples(tk: str, g: pd.DataFrame, gaps: np.ndarray) -> list[dict]:
                 }
                 for q in SIZES:
                     row = {**base, "size": q}
-                    for r in RULES:
+                    row["how"] = fill_how(*fills["pro_rata"], q)
+                    for r in VARIANTS:
                         tf = fill_time(*fills[r][:2], q)
                         row[f"t_fill_{r}"] = tf
-                        row[f"how_{r}"] = fill_how(*fills[r], q)
                         ok = tf >= 0 and tf + MOVE_MS <= until
                         sign = 1 if side == YES else -1
                         row[f"move_{r}"] = sign * (mid_at(tf + MOVE_MS) - mid_at(tf)) if ok else math.nan
@@ -468,12 +482,12 @@ def build_samples(ev: pd.DataFrame, gaps: np.ndarray, workers: int = 8) -> pd.Da
     return pd.DataFrame(rows)
 
 
-def labels(df: pd.DataFrame, h: str, rule: str = "pro_rata") -> pd.DataFrame:
+def labels(df: pd.DataFrame, h: str, variant: str = "pro_rata") -> pd.DataFrame:
     """Rows with a label at horizon h: the record is clean until t0 + h. y = 1 iff the whole
     order filled by then; `move` is defined for filled rows whose post-fill window is clean."""
     hm = HORIZONS[h]
     d = df[df["t0"] + hm <= df["valid_until"]].copy()
-    tf = d[f"t_fill_{rule}"]
+    tf = d[f"t_fill_{variant}"]
     d["y"] = ((tf >= 0) & (tf <= d["t0"] + hm)).astype(int)
-    d["move"] = np.where(d["y"] == 1, d[f"move_{rule}"], np.nan)
+    d["move"] = np.where(d["y"] == 1, d[f"move_{variant}"], np.nan)
     return d

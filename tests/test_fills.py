@@ -114,7 +114,9 @@ def test_hand_built_book_joining_the_best_bid():
     assert r.loc[1, "t_fill_pro_rata"] == 43 * MIN  # 5 ahead traded at 41, then 3 of 4 behind at 43
     assert r.loc[10, "t_fill_pro_rata"] == 50 * MIN  # 3 + the crossing 20 at 50
     assert r.loc[100, "t_fill_pro_rata"] == -1
-    assert list(r["how_pro_rata"]) == ["at_price", "cross", ""]
+    assert list(r["how"]) == ["at_price", "cross", ""]
+    # Without the crossing order only the 3 at 43 min and 1 through at 55 min reach us.
+    assert list(r["t_fill_pro_rata_no_cross"]) == [43 * MIN, -1, -1]
     # Mid 42.5 at the fill (best bid 40c, offer 45c), 41.5 five minutes later (offer 43c).
     assert r.loc[1, "move_pro_rata"] == pytest.approx(-1.0)
 
@@ -123,7 +125,7 @@ def test_hand_built_book_improving_and_behind_the_best():
     df = _samples()
     up = df.loc[(YES, 1)]  # 41c: alone; the trade at 40c would have hit us first
     assert up.loc[1, "queue"] == 0 and up.loc[1, "t_fill_pro_rata"] == 41 * MIN
-    assert up.loc[1, "how_pro_rata"] == "through"
+    assert up.loc[1, "how"] == "through"
     assert up.loc[10, "t_fill_pro_rata"] == 50 * MIN  # 5 + 3 through, then 20 crossing 59c+
     down = df.loc[(YES, -1)]  # 39c: 5 better and 3 ahead; nothing ever trades at or through 39c
     assert down.loc[1, "queue"] == 3 and down.loc[1, "better"] == 5
