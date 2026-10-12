@@ -17,3 +17,5 @@ jobs:
       - run: uv run ruff check .
       - run: uv run ruff format --check .
       - run: uv run pytest
+      - name: leaderboard is current
+        run: uv run scripts/leaderboard.py && git diff --exit-code results/LEADERBOARD.md
