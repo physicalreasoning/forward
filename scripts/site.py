@@ -262,11 +262,20 @@ def page(station, prices_) -> str:
     against copying the last value, skill against the prediction market on the same outcome,
     paper profit after fees, and how much of any gain one month explains.</p>
     <p>The results below are dry runs on past data, through the same pipeline the sealed rounds
-    use. Round 1 freezes on 31 October 2026 and scores November and December; Round 2 freezes on
-    3 January 2027. Their specs, with every hypothesis and pass rule, are public before any of
+    use. Round 1 freezes on 31 October 2026 and scores November and December, with isotherm, our
+    own model of these markets, entered live; Round 2 freezes on 3 January 2027. Their specs, with every hypothesis and pass rule, are public before any of
     their data exists.</p>
     {station_section(station)}
     {price_section(prices_)}
+    <h2>Task 3: what an action would have done</h2>
+    <p>The first two tasks score predictions of what happens on its own. A world model also has to
+    say what would happen if we acted. Task 3 asks it about a limit order we did not place: would it
+    have filled within 5 minutes, 30 minutes or 2 hours, and where did the price go next? We record
+    Kalshi's order books ourselves, and a matching engine is deterministic, so replaying the record
+    gives every such action a known outcome (assuming nobody reacts to our order, which the record
+    cannot show). The first pipeline check uses one day of recordings, too little for a result; the
+    design and a draft spec are in
+    <a href="https://github.com/physicalreasoning/forward/blob/main/docs/TASK3_FILLS.md">TASK3_FILLS.md</a>.</p>
     <h2>How the seal works</h2>
     <ol class="steps">
       <li><b>Freeze.</b> Fit every entry on data settled by the cutoff; record the sha256 of the
@@ -279,7 +288,11 @@ def page(station, prices_) -> str:
     <p class="coda">Code, specs, methods and every result file:
     <a href="https://github.com/physicalreasoning/forward">github.com/physicalreasoning/forward</a>.
     Methods: <a href="https://github.com/physicalreasoning/forward/blob/main/docs/METHODS.md">METHODS.md</a>.
-    Full tables: <a href="https://github.com/physicalreasoning/forward/blob/main/results/LEADERBOARD.md">LEADERBOARD.md</a>.</p>
+    Full tables: <a href="https://github.com/physicalreasoning/forward/blob/main/results/LEADERBOARD.md">LEADERBOARD.md</a>.
+    Weather data by <a href="https://open-meteo.com/">Open-Meteo.com</a> (CC BY 4.0), from ECMWF
+    (AIFS, IFS; &copy; ECMWF, CC BY 4.0), DWD (ICON, CC BY 4.0) and NOAA (GFS, NBM). Truth from NWS
+    climate reports via the Iowa Environmental Mesonet. Market data is used for scoring and not
+    republished: <a href="https://github.com/physicalreasoning/forward/blob/main/docs/DATA_TERMS.md">DATA_TERMS.md</a>.</p>
   </article>
   <footer>&copy; 2026 Physical Reasoning</footer>
 </div>
