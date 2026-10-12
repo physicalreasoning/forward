@@ -90,6 +90,8 @@ flowchart LR
 ```
 
 The public commit times on `main` (the freeze) and `ledger` (each capture) are the evidence.
+The capture runs on a maintainer's machine at 20:00 UTC, with a GitHub Actions backup
+(`.github/workflows/capture.yml`) retrying until 21:42 UTC; whichever reaches `ledger` first is kept.
 Rules and definitions: [docs/METHODS.md](docs/METHODS.md).
 
 ## Reproduce
