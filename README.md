@@ -54,7 +54,8 @@ No time-series foundation model beats copying. Their predicted moves point the r
 50% of the time, and keeping their direction with the copy baseline's spread makes every one
 significantly worse.
 
-Full tables: [results/LEADERBOARD.md](results/LEADERBOARD.md).
+Full tables: [results/LEADERBOARD.md](results/LEADERBOARD.md). Results page:
+[physicalreasoning.ai/forward](https://physicalreasoning.ai/forward/).
 
 ## Rounds
 
@@ -93,6 +94,7 @@ uv run scripts/rehearse.py /tmp/ledger            # the sealed path on the same 
 uv sync --extra tsfm                              # Chronos and TimesFM (CPU is enough)
 uv run --extra tsfm scripts/score_prices.py       # needs isotherm's data/bench/raw
 uv run scripts/leaderboard.py                     # results/LEADERBOARD.md from the JSON results
+uv run scripts/site.py                            # the results page, site/index.html
 ```
 
 Data comes from free sources: IEM (NWS climate reports), Open-Meteo (model runs), Kalshi's public
@@ -108,7 +110,7 @@ API (ladders and quotes), Yahoo (hourly prices). Kalshi requests are faster with
 | `forward/entries.py` | task 1 entries |
 | `forward/metrics.py` | the six columns |
 | `forward/ledger.py`, `seal.py` | the capture deadline and the hash checks |
-| `scripts/` | build, capture, freeze, score, rehearse, leaderboard |
+| `scripts/` | build, capture, freeze, score, rehearse, leaderboard, results page |
 | `ROUND*.md` | pre-registered specs |
 | `frozen/` | frozen rounds (from 2026-10-31) |
 | `results/` | every result, as JSON, plus the leaderboard |
