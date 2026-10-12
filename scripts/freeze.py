@@ -12,11 +12,11 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
-import hashlib
 import json
 
 from forward import ROOT, entries
 from forward.history import fit_table
+from forward.seal import params_hash, sha256_file
 
 STATION_CODE = [
     "forward/entries.py",
@@ -27,6 +27,7 @@ STATION_CODE = [
     "forward/history.py",
     "forward/stations.py",
     "forward/ledger.py",
+    "forward/seal.py",
     "scripts/score.py",
 ]
 PRICE_CODE = [
@@ -52,10 +53,6 @@ ROUNDS = {
 CODE = STATION_CODE  # kept for scripts/rehearse.py
 
 
-def sha(path) -> str:
-    return hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
-
-
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--round", type=int, required=True)
@@ -70,9 +67,9 @@ def main():
         "round": n,
         "frozen_at": dt.datetime.now(dt.UTC).isoformat(timespec="seconds"),
         **{k: v for k, v in r.items() if k != "code"},
-        "spec_sha256": sha(r["spec"]),
-        "code_sha256": {p: sha(p) for p in r["code"]},
-        "params_sha256": hashlib.sha256(blob.encode()).hexdigest(),
+        "spec_sha256": sha256_file(r["spec"]),
+        "code_sha256": {p: sha256_file(p) for p in r["code"]},
+        "params_sha256": params_hash(params),
         "params": json.loads(blob),
     }
     out.parent.mkdir(exist_ok=True)

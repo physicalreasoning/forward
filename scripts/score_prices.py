@@ -18,16 +18,13 @@ from __future__ import annotations
 import argparse
 import json
 import pathlib
-import sys
 
 import numpy as np
 import pandas as pd
 
 from forward import ROOT, metrics, price_ladders, prices
+from forward.seal import check_frozen
 from forward.tsfm import Chronos, TimesFM
-
-sys.path.insert(0, str(pathlib.Path(__file__).parent))
-from score import check_frozen
 
 MIN_CONTEXT = 256
 BATCH = 64
@@ -198,16 +195,12 @@ def main():
         print(f"\n{lead}: {P['problems']} ladders, {P['days']} days")
         for e in dists:
             x = P[e]
-            line = "{:26s} log {:+.3f}  vs copy {:+.3f} [{:+.3f}, {:+.3f}]  vs bid {:+.3f} [{:+.3f}, {:+.3f}]".format(
-                e,
-                x["log_score"],
-                x["vs_copy"]["diff"],
-                *x["vs_copy"]["ci"],
-                x["vs_market_bid"]["diff"],
-                *x["vs_market_bid"]["ci"],
+            line = (
+                f"{e:26s} log {x['log_score']:+.3f}  vs copy {metrics.fmt(x['vs_copy'])}"
+                f"  vs bid {metrics.fmt(x['vs_market_bid'])}"
             )
             if "pnl" in x:
-                line += "  pnl ${:+.0f} (1c ${:+.0f})".format(x["pnl"], x["pnl_slip1"])
+                line += f"  pnl ${x['pnl']:+.0f} (1c ${x['pnl_slip1']:+.0f})"
             print(line)
 
 

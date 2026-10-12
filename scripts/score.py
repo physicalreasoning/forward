@@ -23,6 +23,7 @@ from forward import ROOT, entries, metrics, truth
 from forward import ledger as ledger_mod
 from forward.history import fit_table
 from forward.market import ladders
+from forward.seal import check_frozen
 from forward.stations import STATIONS
 
 BASELINES = ("persistence", "climatology")
@@ -99,7 +100,7 @@ def ladder_scores(d, pred, lad) -> dict:
     per = {e: [] for e in list(pred) + ["market_bid", "market_mid"]}
     pnl = {e: {"slip0": [], "slip1": [], "trades": 0} for e in pred}
     dates = []
-    for ev, g in lad.groupby("event"):
+    for _, g in lad.groupby("event"):
         g = g.sort_values("lo")
         if g["yes"].isna().any() or g["yes"].sum() != 1:
             continue
@@ -149,22 +150,6 @@ def dry_run(start: str, end: str) -> dict:
     res = score(test, params, lad)
     res.update({"kind": "dry-run (not sealed)", "window": [start, end], "inputs": "archive previous_day1"})
     return res
-
-
-def _sha(path) -> str:
-    return hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
-
-
-def check_frozen(n: int) -> dict:
-    """Load a frozen round, refusing if the spec, any scoring file or the parameters changed."""
-    fz = json.loads((ROOT / "frozen" / f"round{n}.json").read_text())
-    changed = [p for p, h in {fz["spec"]: fz["spec_sha256"], **fz["code_sha256"]}.items() if _sha(p) != h]
-    blob = json.dumps(fz["params"], sort_keys=True)
-    if hashlib.sha256(blob.encode()).hexdigest() != fz["params_sha256"]:
-        changed.append("params")
-    if changed:
-        raise SystemExit(f"changed since the freeze: {changed}")
-    return fz
 
 
 def sealed(n: int, ledger_dir) -> dict:
@@ -228,14 +213,8 @@ def main():
         if e in lad:
             x = lad[e]
             print(
-                "{:14s} vs bid-market {:+.3f} [{:+.3f}, {:+.3f}]  pnl ${:+.0f} (1c slip ${:+.0f}) trades {}".format(
-                    e,
-                    x["log_vs_market_bid"]["diff"],
-                    *x["log_vs_market_bid"]["ci"],
-                    x["pnl"],
-                    x["pnl_slip1"],
-                    x["trades"],
-                )
+                f"{e:14s} vs bid-market {metrics.fmt(x['log_vs_market_bid'])}"
+                f"  pnl ${x['pnl']:+.0f} (1c slip ${x['pnl_slip1']:+.0f}) trades {x['trades']}"
             )
     for k, v in res["tests"].items():
         if not isinstance(v, dict):

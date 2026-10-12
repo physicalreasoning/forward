@@ -20,6 +20,7 @@ import score
 from forward import DATA, ROOT, entries
 from forward.history import fit_table
 from forward.openmeteo import MODELS
+from forward.seal import sha256_file
 
 S, E = "2026-07-01", "2026-10-09"
 # cached ladders predate the settle column
@@ -55,8 +56,8 @@ fz = {
     "cutoff": cut,
     "window": [S, E],
     "spec": "ROUND1.md",
-    "spec_sha256": freeze.sha("ROUND1.md"),
-    "code_sha256": {p: freeze.sha(p) for p in freeze.CODE},
+    "spec_sha256": sha256_file("ROUND1.md"),
+    "code_sha256": {p: sha256_file(p) for p in freeze.CODE},
     "params_sha256": hashlib.sha256(blob.encode()).hexdigest(),
     "params": json.loads(blob),
 }
