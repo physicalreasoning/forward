@@ -31,7 +31,8 @@ the ladders themselves, beat the market it prices against?
   on D-1 (`forward/ledger.py`); if a station-day has two, the earlier one counts.
 - **isotherm's ladders:** at the same read, `scripts/capture.py` asks isotherm's public API
   (https://isotherm.onrender.com, `GET /ladder/{city}?day=D`) for every station it covers and stores
-  each answer as served under the ledger file's `isotherm` key, with the time it arrived and the
+  each answer under the ledger file's `isotherm` key (without the market's quotes, which the public
+  ledger may not republish), with the time it arrived and the
   model hash `GET /health` reports before and after the calls (`forward/isotherm_live.py`). An
   answer counts only if it arrived before 22:00 UTC on D-1 and both hashes are `b200c51ce4ee`, the
   model entered here; answers from any other model are dropped, not scored.
