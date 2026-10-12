@@ -34,13 +34,13 @@ def fake_get(fail=()):
     return get, calls
 
 
-def test_capture_calls_only_covered_cities_and_stores_responses_as_returned():
+def test_capture_calls_only_covered_cities_and_stores_public_responses():
     get, calls = fake_get()
     days = {"NY": "2026-11-02", "CHI": "2026-11-02", "SEA": "2026-11-02"}
     b = iso.capture(days, get=get, now=lambda: "2026-11-01T20:01:00+00:00")
     assert calls == ["/health", "/ladder/NY", "/ladder/CHI", "/health"]
     assert [r["station"] for r in b["rows"]] == ["NY", "CHI"]  # SEA is not covered: absent
-    assert b["rows"][0]["response"] == ladder("NY")
+    assert b["rows"][0]["response"] == iso.public(ladder("NY"))
     assert b["health"] == b["health_after"] == HEALTH
     assert iso.accept(b)
 
@@ -89,3 +89,31 @@ def test_probs_refuses_a_mismatched_or_incomplete_answer():
     bad = ladder()
     bad["buckets"][1]["p_model"] = None
     assert iso.probs({"station": "NY", "day": "2026-11-02", "response": bad}) is None
+
+
+def test_market_fields_never_reach_the_public_ledger():
+    isotherm_live = iso
+
+    resp = {
+        "city": "NY",
+        "day": "2026-11-02",
+        "buckets": [
+            {
+                "ticker": "T1",
+                "lo": 60.5,
+                "hi": 62.5,
+                "bid": 0.3,
+                "ask": 0.35,
+                "p_market": 0.32,
+                "p_forecast": 0.3,
+                "p_model": 0.31,
+            }
+        ],
+    }
+    block = isotherm_live.capture(
+        {"NY": "2026-11-02"},
+        get=lambda path, params=None: {"cities": ["NY"], "model_hash": "x"} if path == "/health" else resp,
+    )
+    stored = block["rows"][0]["response"]["buckets"][0]
+    assert set(stored) == set(isotherm_live.KEEP)
+    assert isotherm_live.probs(block["rows"][0]) == {"T1": 0.31}

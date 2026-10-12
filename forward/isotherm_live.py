@@ -8,8 +8,8 @@ columns (`forward/registry.py`).
 
 The service covers 7 of the 19 stations (NY, CHI, MIA, AUS, LAX, DEN, PHIL; `GET /health` lists
 them). At each read `scripts/capture.py` calls `GET /health`, then `GET /ladder/{city}?day=D` for
-every covered station, then `GET /health` again, and stores the responses as returned under the
-ledger file's "isotherm" key. A stored ladder counts only if
+every covered station, then `GET /health` again, and stores the responses under the ledger file's
+"isotherm" key, with each bucket's market fields removed (`public`). A stored ladder counts only if
 
 - it was fetched before 22:00 UTC on D-1, the rule every captured input follows
   (`forward/ledger.py`), and
@@ -35,6 +35,18 @@ MODEL_HASH = "b200c51ce4ee"  # FINDINGS §9's frozen strategy, fit before 2026-0
 TIMEOUT = 90  # seconds per request; a cold start takes up to about 60
 RETRIES = 4
 DEADLINE = 15 * 60  # stop calling after this many seconds, well inside the 22:00 UTC limit
+
+
+# Kalshi's quotes are not ours to republish (docs/DATA_TERMS.md), and the ledger is public: each
+# stored bucket keeps isotherm's own numbers and the bucket's definition, never the market's.
+KEEP = ("ticker", "lo", "hi", "p_forecast", "p_model")
+
+
+def public(response: dict) -> dict:
+    """The response with each bucket's market fields (bid, ask, p_market) removed."""
+    out = dict(response)
+    out["buckets"] = [{k: b.get(k) for k in KEEP} for b in response.get("buckets", [])]
+    return out
 
 
 class Unavailable(Exception):
@@ -64,7 +76,7 @@ def _now() -> str:
 
 
 def capture(days: dict[str, str], get=_get, now=_now, clock=time.monotonic) -> dict:
-    """Call the service for each station's target day; the ledger block, as returned.
+    """Call the service for each station's target day; the ledger block, market fields removed.
 
     days: station key (isotherm's city key) -> target day, YYYY-MM-DD. Stations the service
     does not cover are left out: absent, not errors.
@@ -87,7 +99,7 @@ def capture(days: dict[str, str], get=_get, now=_now, clock=time.monotonic) -> d
             continue
         try:
             r = get(f"/ladder/{st}", {"day": day})
-            rows.append({"station": st, "day": day, "fetched_at": now(), "response": r})
+            rows.append({"station": st, "day": day, "fetched_at": now(), "response": public(r)})
         except Exception as ex:  # noqa: BLE001 (one city failing must not lose the rest)
             rows.append({"station": st, "day": day, "fetched_at": now(), "error": str(ex)[:200]})
     block["rows"] = rows
