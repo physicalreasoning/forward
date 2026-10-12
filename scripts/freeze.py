@@ -14,12 +14,13 @@ import argparse
 import datetime as dt
 import json
 
-from forward import ROOT, entries
+from forward import ROOT, registry
 from forward.history import fit_table
 from forward.seal import params_hash, sha256_file
 
 STATION_CODE = [
     "forward/entries.py",
+    "forward/registry.py",
     "forward/metrics.py",
     "forward/openmeteo.py",
     "forward/market.py",
@@ -30,6 +31,8 @@ STATION_CODE = [
     "forward/seal.py",
     "scripts/score.py",
 ]
+# Every registered entry's module, e.g. forward/isotherm_live.py, which pins the served model.
+STATION_CODE += [p for p in registry.code_files("station-highs") if p not in STATION_CODE]
 PRICE_CODE = [
     "forward/prices.py",
     "forward/tsfm.py",
@@ -61,7 +64,7 @@ def main():
     out = ROOT / "frozen" / f"round{n}.json"
     if out.exists():
         raise SystemExit(f"{out} exists: a round is frozen once")
-    params = entries.fit(fit_table(r["cutoff"]))
+    params = registry.fit(fit_table(r["cutoff"]))
     blob = json.dumps(params, sort_keys=True)
     rec = {
         "round": n,

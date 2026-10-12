@@ -17,7 +17,7 @@ sys.path.insert(0, "scripts")
 import freeze
 import score
 
-from forward import DATA, ROOT, entries
+from forward import DATA, ROOT, registry
 from forward.history import fit_table
 from forward.openmeteo import MODELS
 from forward.seal import sha256_file
@@ -49,7 +49,7 @@ for day, g in fc.groupby("day"):
     )
 # throwaway freeze, round 99
 cut = str((pd.Timestamp(S) - pd.Timedelta(days=2)).date())
-params = entries.fit(fit_table(cut))
+params = registry.fit(fit_table(cut))
 blob = json.dumps(params, sort_keys=True)
 fz = {
     "round": 99,
