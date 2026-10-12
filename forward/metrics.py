@@ -45,8 +45,8 @@ def rps(y, mu, sigma, lo=-40, hi=130):
     """Ranked probability score over the integer grid (lower is better); CRPS's discrete form."""
     k = np.arange(lo, hi + 1)
     F = cdf(k[None, :] + 0.5, np.asarray(mu, float)[:, None], np.asarray(sigma, float)[:, None])
-    O = (k[None, :] >= np.asarray(y, float)[:, None]).astype(float)
-    return ((F - O) ** 2).sum(1)
+    obs = (k[None, :] >= np.asarray(y, float)[:, None]).astype(float)
+    return ((F - obs) ** 2).sum(1)
 
 
 def pit(y, mu, sigma, rng=None):
@@ -78,6 +78,11 @@ def block_ci(dates, vals, n=2000, seed=0):
 def diff(dates, a, b) -> dict:
     d = np.asarray(a, float) - np.asarray(b, float)
     return {"diff": float(d.mean()), "ci": block_ci(dates, d), "n": len(d)}
+
+
+def fmt(d: dict) -> str:
+    """'+0.133 [+0.089, +0.178]' for a diff() result."""
+    return "{:+.3f} [{:+.3f}, {:+.3f}]".format(d.get("diff", d.get("mean")), *d["ci"])
 
 
 def month_share(months, vals) -> float:
