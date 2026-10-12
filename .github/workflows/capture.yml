@@ -7,6 +7,11 @@ on:
     - cron: "12,27,42,57 20 * * *"
     - cron: "12,27,42 21 * * *"
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Capture into a scratch directory; commit nothing"
+        type: boolean
+        default: false
 permissions:
   contents: write
 concurrency: capture
@@ -20,7 +25,14 @@ jobs:
           enable-cache: true
       - name: Check out the ledger
         run: git fetch -q origin ledger && git worktree add -q ledger-wt FETCH_HEAD
+      - name: Dry run (manual test of the capture path)
+        if: inputs.dry_run
+        run: |
+          uv sync --locked
+          uv run scripts/capture.py --out "$RUNNER_TEMP/dry"
+          python3 -c "import json,glob; d=json.load(open(glob.glob('$RUNNER_TEMP/dry/*.json')[0])); print(sum('error' not in r for r in d['rows']), 'stations;', sum('response' in r for r in d.get('isotherm', {}).get('rows', [])), 'isotherm ladders')"
       - name: Capture unless today is already on the ledger
+        if: ${{ !inputs.dry_run }}
         id: cap
         run: |
           day=$(date -u +%F)
@@ -31,7 +43,7 @@ jobs:
           uv sync --locked
           uv run scripts/capture.py --out ledger-wt/ledger
       - name: Commit and push (the earlier capture wins a race)
-        if: steps.cap.outputs.skip != '1'
+        if: ${{ !inputs.dry_run && steps.cap.outputs.skip != '1' }}
         run: |
           cd ledger-wt
           git config user.name "github-actions[bot]"
