@@ -998,7 +998,7 @@
    "verdict": "FAIL"
   }
  },
- "kind": "dry-run (not sealed)",
+ "kind": "dry run (not sealed)",
  "window": [
   "2026-07-01",
   "2026-10-09"

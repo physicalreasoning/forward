@@ -148,7 +148,7 @@ def dry_run(start: str, end: str) -> dict:
     test = d[(d["day"] >= pd.Timestamp(start)) & (d["day"] <= pd.Timestamp(end))]
     lad = pd.concat([ladders(st.series, start, end) for st in STATIONS.values()], ignore_index=True)
     res = score(test, params, lad)
-    res.update({"kind": "dry-run (not sealed)", "window": [start, end], "inputs": "archive previous_day1"})
+    res.update({"kind": "dry run (not sealed)", "window": [start, end], "inputs": "archive previous_day1"})
     return res
 
 
