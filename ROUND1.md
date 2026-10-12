@@ -44,9 +44,9 @@ the ladders themselves, beat the market it prices against?
 
 Every entry is declared in `forward/registry.py`, as one of two kinds. The **gaussian** entries
 below give a Gaussian on the latent high, discretised to the integer CLI value
-(`forward/entries.py`). Parameters are fit once, on the fitting data, and frozen. Every model entry is fit on the same
-days, those where all five models have a forecast (AIFS's archive starts in February 2025), so no
-model gains from a longer record.
+(`forward/entries.py`). Parameters are fit once, on the fitting data, and frozen. Every model
+entry is fit on the same days, those where all five models have a forecast (AIFS's archive
+starts in February 2025), so no model gains from a longer record.
 
 | Entry | Mean | Spread |
 | --- | --- | --- |
