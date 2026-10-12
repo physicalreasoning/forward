@@ -69,3 +69,19 @@ Pre-registered tests:
 | chronos-bolt-base-centre | -2.569 | **-0.053 [-0.074, -0.032]** | **+0.159 [+0.046, +0.274]** | **+0.110 [+0.013, +0.202]** | $-468 |  |
 | market_mid | -2.679 | **-0.163 [-0.253, -0.070]** | +0.049 [-0.001, +0.103] | baseline |  |  |
 | market_bid | -2.728 | **-0.212 [-0.320, -0.100]** | baseline | -0.049 [-0.103, +0.001] |  |  |
+
+## Task 3, fills under intervention: pipeline check on the first day of recorded books, not a result
+
+`fills_dry_run.json`.
+
+Recorded 26.9 h, 13.4 h clean, 1,042 markets.
+
+| Entry | 5m: log score minus base rate | 30m: log score minus base rate | 2h: log score minus base rate |
+| --- | --- | --- | --- |
+| base-rate | baseline | baseline | baseline |
+| copy | +0.016 [+0.006, +0.028] | +0.029 [+0.020, +0.042] | +0.032 [+0.015, +0.037] |
+| queue | -0.541 [-0.560, -0.523] | -0.865 [-0.900, -0.827] | -0.926 [-0.932, -0.902] |
+| queue-cal | -0.008 [-0.012, -0.002] | +0.007 [+0.003, +0.014] | +0.029 [+0.017, +0.033] |
+| logistic | +0.067 [+0.058, +0.081] | +0.118 [+0.110, +0.131] | +0.139 [+0.138, +0.141] |
+
+Fill rate of the sampled orders: 5m 8.2%, 30m 23.5%, 2h 40.9%. Intervals use hour blocks and are not yet meaningful.

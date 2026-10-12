@@ -17,13 +17,13 @@ from forward import ROOT
 OUT = ROOT / "results" / "LEADERBOARD.md"
 
 
-def ci(d: dict, digits: int = 3) -> str:
+def ci(d: dict, digits: int = 3, bold: bool = True) -> str:
     m = d.get("diff", d.get("mean"))
     lo, hi = d["ci"]
     if m == lo == hi == 0:
         return "baseline"
     s = f"{m:+.{digits}f} [{lo:+.{digits}f}, {hi:+.{digits}f}]"
-    return f"**{s}**" if lo > 0 or hi < 0 else s
+    return f"**{s}**" if bold and (lo > 0 or hi < 0) else s
 
 
 def station_table(r: dict) -> list[str]:
@@ -116,6 +116,32 @@ def price_table(r: dict, lead: str) -> list[str]:
     return out
 
 
+def fills_table(r: dict) -> list[str]:
+    """Task 3: log score of each fill model minus the base rate, by horizon."""
+    hs = list(r["horizons"])
+    models = list(r["horizons"][hs[0]]["models"])
+    out = [
+        f"Recorded {r['record']['hours_recorded']:.1f} h, "
+        f"{r['record']['hours_clean']:.1f} h clean, {r['record']['markets']:,} markets.",
+        "",
+        "| Entry | " + " | ".join(f"{h}: log score minus base rate" for h in hs) + " |",
+        "| --- |" + " --- |" * len(hs),
+    ]
+    for m in models:
+        cells = []
+        for h in hs:
+            x = r["horizons"][h]["models"][m]
+            d = x.get("log_score_minus_base_rate")
+            cells.append("baseline" if m == "base-rate" or d is None else ci(d, bold=False))
+        out.append(f"| {m} | " + " | ".join(cells) + " |")
+    rates = ", ".join(f"{h} {r['horizons'][h]['fill_rate']['mean']:.1%}" for h in hs)
+    out += [
+        "",
+        f"Fill rate of the sampled orders: {rates}. Intervals use hour blocks and are not yet meaningful.",
+    ]
+    return out
+
+
 def main():
     lines = [
         "# Leaderboard",
@@ -126,7 +152,7 @@ def main():
         "",
     ]
     results = [(f, json.loads(f.read_text())) for f in sorted((ROOT / "results").glob("*.json"))]
-    results.sort(key=lambda fr: "entries" not in fr[1])  # task 1 first
+    results.sort(key=lambda fr: 0 if "entries" in fr[1] else 2 if "horizons" in fr[1] else 1)
     for f, r in results:
         if "entries" in r:
             w = r.get("window", ["", ""])
@@ -137,6 +163,9 @@ def main():
                 lines += common + [""]
             if r.get("tests"):
                 lines += ["Pre-registered tests:", ""] + tests_list(r) + [""]
+        elif "horizons" in r:
+            lines += [f"## Task 3, fills under intervention: {r['status']}", "", f"`{f.name}`.", ""]
+            lines += fills_table(r) + [""]
         elif "24h" in r:
             lines += [f"## Task 2, price ladders: {r['kind']}", "", f"`{f.name}`.", ""]
             for lead in ("24h", "6h"):
