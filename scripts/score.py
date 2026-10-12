@@ -8,6 +8,11 @@ The dry run fits entries on data settled before its window and uses the archive'
 previous-day runs as inputs. It checks the pipeline and gives a first look; it is not sealed.
 A sealed round loads frozen/round<N>.json (hash-checked) and the inputs captured live at
 each read (ledger/), and refuses to report a verdict until the window has settled.
+
+Entries are gaussian or ladder kind (`forward/registry.py`). Gaussian entries are scored on
+every column. Ladder entries (isotherm, captured live) give bucket probabilities only, so they
+are scored on the ladder columns only, in a second ladder table ("ladders_common") where every
+entry, of either kind, is scored on the same ladders: those all of them forecast.
 """
 
 from __future__ import annotations
@@ -19,7 +24,7 @@ import json
 import numpy as np
 import pandas as pd
 
-from forward import ROOT, entries, metrics, truth
+from forward import ROOT, metrics, registry, truth
 from forward import ledger as ledger_mod
 from forward.history import fit_table
 from forward.market import ladders
@@ -29,9 +34,10 @@ from forward.stations import STATIONS
 BASELINES = ("persistence", "climatology")
 
 
-def score(d: pd.DataFrame, params: dict, lad: pd.DataFrame) -> dict:
+def score(d: pd.DataFrame, params: dict, lad: pd.DataFrame, live: dict | None = None) -> dict:
+    """live: ladder entries' forecasts, {entry: {(station, day): {ticker: probability}}}."""
     d = d.dropna(subset=["high"]).reset_index(drop=True)
-    pred = entries.predict(params, d)
+    pred = registry.predict(params, d)
     # Score every entry on the same rows: those where all entries have a forecast.
     ok = np.ones(len(d), bool)
     for mu, _ in pred.values():
@@ -57,11 +63,13 @@ def score(d: pd.DataFrame, params: dict, lad: pd.DataFrame) -> dict:
             },
         }
     res["ladders"] = ladder_scores(d, pred, lad)
-    res["tests"] = tests(dates, ls, res["ladders"])
+    if live:
+        res["ladders_common"] = ladder_scores(d, pred, lad, live)
+    res["tests"] = tests(dates, ls, res["ladders"], res.get("ladders_common", {}))
     return res
 
 
-def tests(dates, ls, lad) -> dict:
+def tests(dates, ls, lad, common=None) -> dict:
     """The pre-registered tests of ROUND1.md, computed the same way for the dry run."""
 
     def verdict(ci, two_sided=False):
@@ -88,23 +96,42 @@ def tests(dates, ls, lad) -> dict:
         out["H3_emos_all_minus_bid_market"] = {**h3, "verdict": verdict(h3["ci"])}
         h4 = lad["emos-all"]["pnl_slip1_per_ladder"]
         out["H4_emos_all_pnl_per_ladder_slip1"] = {**h4, "verdict": verdict(h4["ci"])}
+    if "isotherm" in (common or {}):
+        h5 = common["isotherm"]["log_vs_market_bid"]
+        out["H5_isotherm_minus_bid_market"] = {**h5, "verdict": verdict(h5["ci"])}
     return out
 
 
-def ladder_scores(d, pred, lad) -> dict:
-    """Entries against the market on Kalshi ladders: log score of the winning bucket, and P&L."""
+def ladder_probs(fc: dict | None, tickers) -> np.ndarray | None:
+    """A ladder entry's probabilities in the ladder's bucket order; None unless it gave every bucket."""
+    if fc is None or set(fc) != set(tickers):
+        return None
+    return np.clip(np.array([fc[t] for t in tickers], float), metrics.EPS, 1.0)
+
+
+def ladder_scores(d, pred, lad, live=None) -> dict:
+    """Entries against the market on Kalshi ladders: log score of the winning bucket, and P&L.
+
+    pred: gaussian entries, (mu, sigma) per row of d; a bucket's probability is the Gaussian's
+    mass between its edges. live: ladder entries, {entry: {(station, day): {ticker: p}}}. A
+    ladder is scored only if every entry given has a forecast for it, so all are scored on the
+    same ladders.
+    """
+    live = live or {}
     if lad.empty:
         return {}
     key = {(r.station, r.day): i for i, r in enumerate(d[["station", "day"]].itertuples(index=False))}
     series_to_station = {st.series: k for k, st in STATIONS.items()}
-    per = {e: [] for e in list(pred) + ["market_bid", "market_mid"]}
-    pnl = {e: {"slip0": [], "slip1": [], "trades": 0} for e in pred}
+    names = list(pred) + list(live)
+    per = {e: [] for e in names + ["market_bid", "market_mid"]}
+    pnl = {e: {"slip0": [], "slip1": [], "trades": 0} for e in names}
     dates = []
     for _, g in lad.groupby("event"):
         g = g.sort_values("lo")
         if g["yes"].isna().any() or g["yes"].sum() != 1:
             continue
-        i = key.get((series_to_station[g["series"].iat[0]], g["day"].iat[0]))
+        sd = (series_to_station[g["series"].iat[0]], g["day"].iat[0])
+        i = key.get(sd)
         if i is None:
             continue
         win = int(np.argmax(g["yes"].to_numpy()))
@@ -112,18 +139,25 @@ def ladder_scores(d, pred, lad) -> dict:
         bid, ask = g["bid"].to_numpy(float), g["ask"].to_numpy(float)
         if not np.isfinite(bid).any():
             continue
+        probs = {e: metrics.bucket_probs(edges, mu[i], s[i]) for e, (mu, s) in pred.items()}
+        probs |= {e: ladder_probs(fc.get(sd), g["ticker"]) for e, fc in live.items()}
+        if any(p is None for p in probs.values()):
+            continue
         dates.append(g["day"].iat[0])
         for kind in ("bid", "mid"):
             per["market_" + kind].append(np.log(metrics.market_probs(bid, ask, kind)[win]))
-        for e, (mu, s) in pred.items():
-            p = metrics.bucket_probs(edges, mu[i], s[i])
+        for e, p in probs.items():
             per[e].append(np.log(p[win] / p.sum()))
             for slip, k in ((0.0, "slip0"), (0.01, "slip1")):
                 v, n = metrics.taker_pnl(p, bid, ask, g["yes"].to_numpy(float), slip=slip)
                 pnl[e][k].append(v)
                 pnl[e]["trades"] += n if slip == 0 else 0
     out = {"ladders": len(dates)}
-    for e in pred:
+    if not dates:
+        return out
+    if live:
+        out["entries"] = {e: "gaussian" for e in pred} | {e: "ladder" for e in live}
+    for e in names:
         out[e] = {
             "log_vs_market_bid": metrics.diff(dates, per[e], per["market_bid"]),
             "log_vs_market_mid": metrics.diff(dates, per[e], per["market_mid"]),
@@ -144,7 +178,7 @@ def ladder_scores(d, pred, lad) -> dict:
 def dry_run(start: str, end: str) -> dict:
     d = fit_table(end)
     train = d[d["day"] < pd.Timestamp(start) - pd.Timedelta(days=1)]
-    params = json.loads(json.dumps(entries.fit(train)))
+    params = json.loads(json.dumps(registry.fit(train)))
     test = d[(d["day"] >= pd.Timestamp(start)) & (d["day"] <= pd.Timestamp(end))]
     lad = pd.concat([ladders(st.series, start, end) for st in STATIONS.values()], ignore_index=True)
     res = score(test, params, lad)
@@ -156,6 +190,15 @@ def sealed(n: int, ledger_dir) -> dict:
     fz = check_frozen(n)
     start, end = fz["window"]
     fc, log = ledger_mod.load(ledger_dir, start, end)
+    live, live_log = {}, {}
+    for e in registry.entries("station-highs", "ladder", "live"):
+        m = e.load()
+        rows, elog = ledger_mod.load_ladder(ledger_dir, e.name, start, end, accept=m.accept)
+        if elog["files"]:
+            live_log[e.name] = elog
+        live[e.name] = {k: p for k, r in rows.items() if (p := m.probs(r)) is not None}
+    # A live entry with no usable answer in the window is absent; it must not empty the table.
+    live = {e: fc_ for e, fc_ in live.items() if fc_}
     lad = pd.concat([ladders(st.series, start, end) for st in STATIONS.values()], ignore_index=True)
     # Truth: the CLI high, refetched now; Kalshi's settlement value where the CLI is missing.
     years = range(pd.Timestamp(start).year, pd.Timestamp(end).year + 1)
@@ -169,13 +212,14 @@ def sealed(n: int, ledger_dir) -> dict:
     n_kalshi = int((~in_cli).sum())
     prev = t.assign(day=t["day"] + pd.Timedelta(days=1)).rename(columns={"high": "prev_high"})
     d = fc.merge(t, on=["station", "day"], how="left").merge(prev, on=["station", "day"], how="left")
-    res = score(d, fz["params"], lad)
+    res = score(d, fz["params"], lad, live)
     res.update(
         {
             "kind": f"sealed round {n}",
             "window": [start, end],
             "inputs": "ledger",
             "ledger": log,
+            **({"ledger_live": live_log} if live_log else {}),
             "truth_from_kalshi": n_kalshi,
             "complete": bool(pd.Timestamp.now() > pd.Timestamp(end) + pd.Timedelta(days=2)),
             "params_sha256": fz["params_sha256"],
@@ -216,6 +260,14 @@ def main():
                 f"{e:14s} vs bid-market {metrics.fmt(x['log_vs_market_bid'])}"
                 f"  pnl ${x['pnl']:+.0f} (1c slip ${x['pnl_slip1']:+.0f}) trades {x['trades']}"
             )
+    com = res.get("ladders_common", {})
+    if com.get("entries"):
+        print(
+            "same ladders for every entry:", com["ladders"], "market bid log", round(com["market_bid_log"], 3)
+        )
+        for e in com["entries"]:
+            x = com[e]
+            print(f"{e:14s} vs bid-market {metrics.fmt(x['log_vs_market_bid'])}  pnl ${x['pnl_slip1']:+.0f}")
     for k, v in res["tests"].items():
         if not isinstance(v, dict):
             print(k, v)

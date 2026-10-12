@@ -6,6 +6,10 @@ written down when they exist. One JSON file per read goes to ledger/YYYY-MM-DD.j
 UTC date); the runner commits it to the public `ledger` branch, whose commit time is the proof
 that the inputs predate the outcome.
 
+Live ladder entries (`forward/registry.py`; isotherm) are asked next, for each station's next
+day, and stored under their own key in the same file. The model runs are written first, so a
+slow or failing outside service can never cost them.
+
     uv run scripts/capture.py [--out DIR]
 """
 
@@ -16,8 +20,15 @@ import datetime as dt
 import json
 import pathlib
 
-from forward import ROOT, openmeteo
+import pandas as pd
+
+from forward import ROOT, openmeteo, registry
 from forward.stations import STATIONS
+
+
+def tomorrow(st) -> str:
+    """The target day at the read: the station's next local calendar day (as openmeteo.live)."""
+    return str((pd.Timestamp.now(tz=st.tz).normalize() + pd.Timedelta(days=1)).date())
 
 
 def main():
@@ -35,6 +46,14 @@ def main():
     f = a.out / f"{now.date()}.json"
     f.write_text(json.dumps(rec, indent=1))
     print(f, sum("error" not in r for r in rec["rows"]), "stations")
+    days = {k: tomorrow(st) for k, st in STATIONS.items()}
+    for e in registry.entries("station-highs", "ladder", "live"):
+        try:
+            rec[e.name] = e.load().capture(days)
+        except Exception as ex:  # noqa: BLE001
+            rec[e.name] = {"error": str(ex)[:200], "rows": []}
+        f.write_text(json.dumps(rec, indent=1))
+        print(e.name, sum("response" in r for r in rec[e.name].get("rows", [])), "ladders")
 
 
 if __name__ == "__main__":

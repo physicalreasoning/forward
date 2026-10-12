@@ -53,6 +53,36 @@ def station_table(r: dict) -> list[str]:
     return out
 
 
+def common_table(r: dict) -> list[str]:
+    """Every entry, gaussian and ladder kind, on the same ladders: those all of them forecast."""
+    c = r.get("ladders_common", {})
+    if not c.get("entries"):
+        return []
+    ladder_only = [e for e, k in c["entries"].items() if k == "ladder"]
+    rows = sorted(c["entries"], key=lambda e: -c[e]["log_vs_market_bid"]["diff"])
+    out = [
+        f"### Every entry on the {c['ladders']:,} ladders {', '.join(ladder_only)} also covers",
+        "",
+        f"Ladder entries ({', '.join(ladder_only)}) give bucket probabilities only, so the integer-grid "
+        "columns above do not apply to them.",
+        "",
+        "| Entry | Kind | vs bid market | vs mid market | P&L, 1c slip | P&L per ladder, 1c slip |",
+        "| --- | --- | --- | --- | --- | --- |",
+    ]
+    for e in rows:
+        x = c[e]
+        out.append(
+            f"| {e} | {c['entries'][e]} | {ci(x['log_vs_market_bid'])} | {ci(x['log_vs_market_mid'])} "
+            f"| ${x['pnl_slip1']:+,.0f} | {ci(x['pnl_slip1_per_ladder'])} |"
+        )
+    out += [
+        "",
+        f"Market reference on these ladders: bid-priced log score {c['market_bid_log']:.3f}, "
+        f"mid-priced {c['market_mid_log']:.3f}.",
+    ]
+    return out
+
+
 def tests_list(r: dict) -> list[str]:
     out = []
     for k, v in r.get("tests", {}).items():
@@ -103,6 +133,8 @@ def main():
             lines += [f"## Task 1, station highs: {r['kind']}", ""]
             lines += [f"`{f.name}`, {w[0]} to {w[1]}, {r['rows']:,} station-days, inputs: {r['inputs']}.", ""]
             lines += station_table(r) + [""]
+            if common := common_table(r):
+                lines += common + [""]
             if r.get("tests"):
                 lines += ["Pre-registered tests:", ""] + tests_list(r) + [""]
         elif "24h" in r:

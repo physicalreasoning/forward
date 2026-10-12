@@ -13,14 +13,36 @@ entry may be fit on), the **first read**, and the **window** of outcomes it is s
    (as sorted-key JSON), the round's spec, and every file its scoring runs. It is committed and
    pushed before the first read; the public commit is the timestamp.
 2. **Capture** (`scripts/capture.py`, `forward/ledger.py`). Inputs that exist only live (model
-   runs) are written at each read and committed to the public `ledger` branch. A capture counts
-   only if it was taken before 22:00 UTC on D-1. A station-day without one is dropped for every
-   entry, never imputed.
+   runs, and the answers of live entries such as isotherm) are written at each read and committed
+   to the public `ledger` branch. A capture counts only if it was taken before 22:00 UTC on D-1;
+   a live entry's answer is timed by when it arrived. A station-day without one is dropped for
+   every entry, never imputed.
 3. **Score** (`forward/seal.py`). Scoring refuses to run if any recorded hash differs, then reads
    inputs only from the ledger and truth only from sources published after the outcome.
 
 Entries are scored on the same rows: a row is kept only if every entry has a forecast for it, so
 no entry can improve its average by abstaining on hard days.
+
+## Entries: two kinds
+
+Every task and entry is declared in `forward/registry.py`. An entry is one of two kinds:
+
+- **gaussian:** a Gaussian (mu, sigma) on a latent value discretised to integers. Scored on all
+  six columns.
+- **ladder:** a probability for each bucket of a Kalshi ladder, and nothing finer. Scored on the
+  ladder columns only (market and decision value); the integer-grid columns (proper score on the
+  integers, calibration, copy and climatology, month share) are reported as not applicable.
+
+and comes from one of three sources: **fit** (parameters fit by the cutoff, frozen and hashed),
+**fixed** (a rule, or released weights at a pinned revision) or **live** (an outside model served
+at the read; its answers are captured into the ledger, and its version is pinned in the hashed
+code so a redeployed model is never scored as the entered one).
+
+On the ladders the same-rows rule holds across kinds: a ladder entry that covers fewer stations
+gets its own ladder table, in which every entry, of either kind, is scored on exactly the ladders
+all of them forecast. The table of gaussian entries on every ladder is reported unchanged beside
+it. A ladder entry's answer counts for a ladder only if it gives every bucket of the settled
+ladder (matched by ticker). Adding an entry or a task: [ADDING.md](ADDING.md).
 
 ## Task 1: station highs
 
@@ -31,6 +53,11 @@ no entry can improve its average by abstaining on hard days.
 - **Inputs:** each model's hourly 2 m temperature from Open-Meteo, maximum over the station's
   local day (at least 20 hours present). Archived previous-day runs fit the entries; live runs
   captured at the read are what a round scores.
+- **isotherm (ladder entry, live):** at the read, `GET /ladder/{city}?day=D` on isotherm's public
+  API for each of the 7 stations it serves, stored without the market's quotes (bid, ask and market probability are dropped, since the ledger is public); the bucket probabilities are its
+  `p_model`. `GET /health` before and after the calls must report the entered model hash
+  (`forward/isotherm_live.py`). isotherm pools the market's live prices, so it is compared to
+  the market on the ladders, which is the comparison it is built for.
 
 ## Task 2: price ladders
 
@@ -68,6 +95,7 @@ so rows within a date are not independent; resampling rows would understate the 
 | raw-*model* | the model's number | its RMSE at the station |
 | emos-*model* | a + b x model, by station (EMOS, Gneiting et al. 2005, without an ensemble-spread term) | residual SD by station and month |
 | emos-all | ridge regression on all five models, by station | residual SD by station and month |
+| isotherm | ladder entry: isotherm's served bucket probabilities, model hash pinned | not applicable |
 
 Every model entry is fit on the same days, those where all five models exist, so no model gains
 from a longer archive.

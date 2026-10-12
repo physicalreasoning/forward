@@ -61,11 +61,13 @@ Full tables: [results/LEADERBOARD.md](results/LEADERBOARD.md). Results page:
 
 | Round | Tasks | Fit through | Window | Status |
 | --- | --- | --- | --- | --- |
-| 1 | Station highs | 2026-10-30 | 2026-11-01 to 2026-12-26 | [spec](ROUND1.md); freezes 2026-10-31 |
+| 1 | Station highs (with isotherm) | 2026-10-30 | 2026-11-01 to 2026-12-26 | [spec](ROUND1.md); freezes 2026-10-31 |
 | 2 | Station highs; price ladders | 2027-01-02 | 2027-01-04 to 2027-02-28 | [spec](ROUND2.md); freezes 2027-01-03 |
 
 Each spec states its hypotheses and pass rules before any of its data exists. Every result is
-published, including failures.
+published, including failures. Round 1 also enters [isotherm](https://github.com/physicalreasoning/isotherm),
+captured live from its public API at each read and scored on the ladders it covers against the
+market (H5).
 
 ## How a round is sealed
 
@@ -97,6 +99,11 @@ uv run scripts/leaderboard.py                     # results/LEADERBOARD.md from 
 uv run scripts/site.py                            # the results page, site/index.html
 ```
 
+The same steps under one command: `uv run forward list | capture | score | freeze | rehearse |
+leaderboard | site` (arguments pass through to the script). To add an entry or a task,
+`uv run forward new entry NAME` or `uv run forward new task NAME`; see
+[docs/ADDING.md](docs/ADDING.md).
+
 Data comes from free sources: IEM (NWS climate reports), Open-Meteo (model runs), Kalshi's public
 API (ladders and quotes), Yahoo (hourly prices). Kalshi requests are faster with an API key
 (`KALSHI_API_KEY_ID`, `KALSHI_PRIVATE_KEY_PATH`) but do not need one.
@@ -107,9 +114,11 @@ API (ladders and quotes), Yahoo (hourly prices). Kalshi requests are faster with
 | --- | --- |
 | `forward/stations.py`, `truth.py`, `openmeteo.py`, `market.py`, `history.py` | task 1 data |
 | `forward/prices.py`, `price_ladders.py`, `tsfm.py` | task 2 data and the foundation-model entries |
-| `forward/entries.py` | task 1 entries |
+| `forward/registry.py` | every task and entry, declared in one place ([adding one](docs/ADDING.md)) |
+| `forward/entries.py`, `isotherm_live.py` | task 1 entries: the fitted gaussian ones, and isotherm (live, ladder) |
 | `forward/metrics.py` | the six columns |
 | `forward/ledger.py`, `seal.py` | the capture deadline and the hash checks |
+| `forward/cli.py`, `scaffold.py` | the `forward` command and its templates |
 | `scripts/` | build, capture, freeze, score, rehearse, leaderboard, results page |
 | `ROUND*.md` | pre-registered specs |
 | `frozen/` | frozen rounds (from 2026-10-31) |

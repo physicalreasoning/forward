@@ -9,7 +9,8 @@ deviation is reported beside the original text, never in place of it.
 Does a learned atmospheric world model (ECMWF's AIFS) carry more information about tomorrow's
 observed high than the physics models it was trained to imitate, once each is calibrated the
 same way? And does any of them beat the trivial answers (copy yesterday, or climatology) and
-the prediction market that prices the same outcome?
+the prediction market that prices the same outcome? And does isotherm, our calibrated model of
+the ladders themselves, beat the market it prices against?
 
 ## Task
 
@@ -28,6 +29,13 @@ the prediction market that prices the same outcome?
   `scripts/capture.py` and committed to the `ledger` branch at the read; a day without a
   ledger entry is dropped for every entry. A capture counts only if it was taken before 22:00 UTC
   on D-1 (`forward/ledger.py`); if a station-day has two, the earlier one counts.
+- **isotherm's ladders:** at the same read, `scripts/capture.py` asks isotherm's public API
+  (https://isotherm.onrender.com, `GET /ladder/{city}?day=D`) for every station it covers and stores
+  each answer under the ledger file's `isotherm` key (without the market's quotes, which the public
+  ledger may not republish), with the time it arrived and the
+  model hash `GET /health` reports before and after the calls (`forward/isotherm_live.py`). An
+  answer counts only if it arrived before 22:00 UTC on D-1 and both hashes are `b200c51ce4ee`, the
+  model entered here; answers from any other model are dropped, not scored.
 - **Station history:** CLI highs through D-1. D-1's report is not final at the read; using it
   gives the copy baseline a small advantage, which only makes beating it harder.
 - **Fitting data:** model archives (Open-Meteo previous-day runs, AIFS from 2025, others from
@@ -35,10 +43,11 @@ the prediction market that prices the same outcome?
 
 ## Entries
 
-All Gaussian on the latent high, discretised to the integer CLI value (`forward/entries.py`).
-Parameters are fit once, on the fitting data, and frozen. Every model entry is fit on the same
-days, those where all five models have a forecast (AIFS's archive starts in February 2025), so no
-model gains from a longer record.
+Every entry is declared in `forward/registry.py`, as one of two kinds. The **gaussian** entries
+below give a Gaussian on the latent high, discretised to the integer CLI value
+(`forward/entries.py`). Parameters are fit once, on the fitting data, and frozen. Every model
+entry is fit on the same days, those where all five models have a forecast (AIFS's archive
+starts in February 2025), so no model gains from a longer record.
 
 | Entry | Mean | Spread |
 | --- | --- | --- |
@@ -48,10 +57,24 @@ model gains from a longer record.
 | emos-{aifs, ifs, gfs, icon, nbm} | a + b x model, by station | residual SD by station and month |
 | emos-all | ridge on all five models, by station | residual SD by station and month |
 
+One **ladder** entry gives a probability for each bucket of Kalshi's ladder, not for each integer:
+
+| Entry | What it is | Stations |
+| --- | --- | --- |
+| isotherm | isotherm's served probabilities (`p_model`), model hash `b200c51ce4ee`: a log pool of the market's prices and EMOS-calibrated GFS MOS, fit before 2026-06-29 (isotherm FINDINGS §9) | the 7 it serves: NY, CHI, MIA, AUS, LAX, DEN, PHIL |
+
+isotherm is not fit here; its seal is the model hash, pinned in `forward/isotherm_live.py`, which
+is hashed with the rest of the scoring code. It reads the market's quotes when it is called, a
+few minutes after the 20:00 UTC candle the market reference uses; it pools those prices by
+design, so beating the market is a statement about what it adds to them.
+
 The market (Kalshi's ladder at the read, bid-priced and mid) is a reference, not an entry.
 The round scores only the entries above; no outside entries.
 
 ## Columns reported for every entry
+
+Gaussian entries get all six. A ladder entry gets columns 4 and 5; columns 1, 2, 3 and 6 are
+defined on the integer grid and are reported as not applicable for it.
 
 1. Log score and ranked probability score, with date-block bootstrap 95% CIs.
 2. Calibration: PIT flatness and 50/80/90% central-interval coverage.
@@ -62,10 +85,15 @@ The round scores only the entries above; no outside entries.
    and without 1 cent of slippage.
 6. Month share of the gain against persistence.
 
+Columns 4 and 5 are reported twice: for the gaussian entries on every ladder (as in the dry run),
+and for every entry, gaussian and ladder, on the same ladders: those isotherm covers, where every
+entry has a forecast. A ladder counts for isotherm only if its answer has a probability for every
+bucket of the settled ladder (matched by ticker).
+
 ## Pre-registered tests
 
-All differences are per station-day (per ladder for H3 and H4), with 95% CIs from 2,000 date-block
-resamples.
+All differences are per station-day (per ladder for H3, H4 and H5), with 95% CIs from 2,000
+date-block resamples.
 
 - **H1 (learned vs physics):** log score of emos-aifs minus emos-ifs. AIFS better if the CI is
   above 0, IFS better if below, otherwise a tie. Same test for raw-aifs minus raw-ifs, reported as
@@ -74,6 +102,10 @@ resamples.
 - **H3 (market):** emos-all minus the bid-priced market on the ladders. Passes if the CI is above 0.
 - **H4 (decision value):** emos-all's mean P&L per ladder after fees and 1 cent of slippage.
   Passes if the CI is above 0.
+- **H5 (isotherm vs market):** isotherm minus the bid-priced market, on the ladders isotherm
+  covers (the second ladder table). Passes if the CI is above 0. Reported beside it, not tested:
+  isotherm's P&L per ladder after fees and 1 cent of slippage, and every gaussian entry on the
+  same ladders.
 
 Every result is published, including failures.
 
