@@ -8,6 +8,8 @@ one model answering a task. Entries come in two kinds, which decide the columns 
             and the ladders (log score against the market, taker P&L).
   ladder    one probability per Kalshi ladder bucket. Scored on the ladder columns only; the
             integer-grid columns do not apply, and the entry is absent from them.
+  binary    one probability per yes/no event (task 3: does a hypothetical order fill). Scored by
+            log score and Brier with calibration, against a base rate and a copy rule.
 
 and from one of three sources:
 
@@ -36,7 +38,7 @@ if TYPE_CHECKING:
     import numpy as np
     import pandas as pd
 
-Kind = Literal["gaussian", "ladder"]
+Kind = Literal["gaussian", "ladder", "binary"]
 Source = Literal["fit", "fixed", "live"]
 
 
@@ -176,6 +178,15 @@ add(
     )
 )
 
+add(
+    Task(
+        "fills",
+        "whether a hypothetical limit order would fill, and the move after it, from recorded books",
+        score="scripts/score_fills.py",
+        spec="docs/TASK3_FILLS.md",
+    )
+)
+
 # Entries: station highs --------------------------------------------------------------------
 
 add(
@@ -227,5 +238,16 @@ for _n, _what in (
             f"{_what}'s median, copy's spread",
         )
     )
+
+# Entries: fills (task 3) ------------------------------------------------------------------
+
+for _n, _what in (
+    ("base-rate", "fill rate by distance to best and order size, from training days"),
+    ("copy", "fill rate given whether the price crossed our level in the previous window"),
+    ("queue", "queue depletion by Poisson trade arrivals (Cont, Stoikov and Talreja 2010)"),
+    ("queue-cal", "the queue model, recalibrated on training days"),
+    ("logistic", "logistic regression on book features, fit on earlier days"),
+):
+    add(Entry(f"fills-{_n}", "fills", "binary", "fit", "forward.fill_entries", _what))
 
 # forward new: registrations are appended below this line.
