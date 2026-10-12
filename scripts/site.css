@@ -1,0 +1,148 @@
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    color-scheme: light only;
+    --paper: #FFFFFF;
+    --ink: #000000;
+    --muted: #6B6B6B;
+    --rule: #E8E8E8;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  body {
+    font-family: var(--serif);
+    color: var(--ink);
+    background: var(--paper);
+    line-height: 1.7;
+    font-size: 17px;
+  }
+  .wrap { max-width: 38rem; margin: 0 auto; padding: 0 1.25rem; }
+  nav {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 1.8rem 0;
+  }
+  .wordmark {
+    font-family: var(--mono);
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .back {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .back:hover { color: var(--ink); }
+  article { padding: 3rem 0 4rem; }
+  @media (max-width: 560px) { article { padding: 2rem 0 3rem; } }
+  .meta {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+  article h1 {
+    font-size: clamp(1.45rem, 5vw, 1.9rem);
+    font-weight: 400;
+    line-height: 1.35;
+    text-wrap: balance;
+    margin-bottom: 1.8rem;
+  }
+  article p { margin-bottom: 1.2rem; }
+  article p:first-of-type { font-size: 1.08rem; color: var(--muted); }
+  figure { margin: 2.4rem 0; position: relative; }
+  figure canvas { width: 100%; height: 260px; display: block; }
+  figcaption {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin-top: 0.6rem;
+  }
+  .readout {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    color: var(--ink);
+    background: var(--paper);
+    padding: 0 0.2rem;
+    pointer-events: none;
+    font-variant-numeric: tabular-nums;
+  }
+  .sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .stats {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.4rem 0 1.6rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .stats td { padding: 0.35rem 0; border-bottom: 1px solid var(--rule); }
+  .stats td:last-child { text-align: right; }
+  .coda {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    line-height: 1.7;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+    border-top: 1px solid var(--rule);
+    margin-top: 2.6rem;
+    padding-top: 1.2rem;
+  }
+  .coda a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule); }
+  .coda a:hover { border-bottom-color: var(--ink); }
+  .coda a:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 2rem 0 3rem;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+
+  /* forward page additions */
+  article h2 {
+    font-size: 1.25rem;
+    font-weight: 400;
+    margin: 2.8rem 0 1rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--rule);
+  }
+  .stats.wide th {
+    font-weight: 400;
+    color: var(--muted);
+    text-align: left;
+    padding: 0.35rem 0.6rem 0.35rem 0;
+    border-bottom: 1px solid var(--ink);
+  }
+  .stats.wide th:not(:first-child), .stats.wide td:not(:first-child) { text-align: right; }
+  .stats.wide td { padding-right: 0.6rem; white-space: nowrap; }
+  .stats.wide th { white-space: nowrap; }
+  .dim { color: var(--muted); }
+  .steps { padding-left: 1.2rem; margin-bottom: 1.2rem; }
+  .steps li { margin-bottom: 0.7rem; }
+  .note {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+  .note a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule); }

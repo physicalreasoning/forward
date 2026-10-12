@@ -45,3 +45,7 @@ ignore = ["E731"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+
+[tool.ruff.lint.per-file-ignores]
+# HTML template text, wrapped as it reads on the page.
+"scripts/site.py" = ["E501"]
