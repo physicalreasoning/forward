@@ -54,6 +54,13 @@ No time-series foundation model beats copying. Their predicted moves point the r
 50% of the time, and keeping their direction with the copy baseline's spread makes every one
 significantly worse.
 
+**Task 3, fills under intervention** (in development). A counterfactual task: if we had placed a
+limit order at a given price and size, would it have filled within 5 minutes, 30 minutes or 2
+hours, and where did the price go next? The ground truth comes from replaying Kalshi order books
+we record ourselves, so every action has a known outcome. The first pipeline check uses one
+day of recordings; its intervals are not yet meaningful. Design, simulator assumptions and a
+draft spec: [docs/TASK3_FILLS.md](docs/TASK3_FILLS.md).
+
 Full tables: [results/LEADERBOARD.md](results/LEADERBOARD.md). Results page:
 [physicalreasoning.ai/forward](https://physicalreasoning.ai/forward/).
 
@@ -95,6 +102,7 @@ uv run scripts/score.py --dry-run 2026-07-01 2026-10-09
 uv run scripts/rehearse.py /tmp/ledger            # the sealed path on the same window: identical
 uv sync --extra tsfm                              # Chronos and TimesFM (CPU is enough)
 uv run --extra tsfm scripts/score_prices.py       # needs isotherm's data/bench/raw
+uv run scripts/score_fills.py                     # task 3 pipeline check; needs isotherm's data/book
 uv run scripts/leaderboard.py                     # results/LEADERBOARD.md from the JSON results
 uv run scripts/site.py                            # the results page, site/index.html
 ```
@@ -104,9 +112,26 @@ leaderboard | site` (arguments pass through to the script). To add an entry or a
 `uv run forward new entry NAME` or `uv run forward new task NAME`; see
 [docs/ADDING.md](docs/ADDING.md).
 
-Data comes from free sources: IEM (NWS climate reports), Open-Meteo (model runs), Kalshi's public
-API (ladders and quotes), Yahoo (hourly prices). Kalshi requests are faster with an API key
-(`KALSHI_API_KEY_ID`, `KALSHI_PRIVATE_KEY_PATH`) but do not need one.
+## Data and attribution
+
+All inputs come from free sources, each under its own terms ([docs/DATA_TERMS.md](docs/DATA_TERMS.md)).
+This repository publishes code, specs and aggregate scores; it does not republish Kalshi or Yahoo
+data, which their terms do not allow. Fetch scripts download them on your machine.
+
+- **Weather model runs:** [Weather data by Open-Meteo.com](https://open-meteo.com/), licensed
+  [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). The `ledger` branch republishes the
+  captured daily-maximum values, derived (local-day maximum of hourly runs) from that data.
+- **ECMWF AIFS and IFS forecasts** (via Open-Meteo): Copyright © 2024-2026 European Centre for
+  Medium-Range Weather Forecasts (ECMWF). Source: www.ecmwf.int. Licence: CC BY 4.0. ECMWF does
+  not accept any liability for the accuracy or completeness of the data, for any errors, or for
+  any direct or indirect consequences of using it.
+- **Other upstream models** (via Open-Meteo): DWD ICON, CC BY 4.0; NOAA GFS and NBM, public domain.
+- **NWS climate reports, MOS and observations** via the Iowa Environmental Mesonet: public domain.
+- **Kalshi** (ladders, quotes, settlements) and **Yahoo Finance** (hourly prices): used for
+  scoring only, not redistributed.
+
+Kalshi requests are faster with an API key (`KALSHI_API_KEY_ID`, `KALSHI_PRIVATE_KEY_PATH`) but
+do not need one.
 
 ## Layout
 
@@ -116,6 +141,7 @@ API (ladders and quotes), Yahoo (hourly prices). Kalshi requests are faster with
 | `forward/prices.py`, `price_ladders.py`, `tsfm.py` | task 2 data and the foundation-model entries |
 | `forward/registry.py` | every task and entry, declared in one place ([adding one](docs/ADDING.md)) |
 | `forward/entries.py`, `isotherm_live.py` | task 1 entries: the fitted gaussian ones, and isotherm (live, ladder) |
+| `forward/fills.py`, `fill_entries.py` | task 3: the counterfactual fill simulator and its entries |
 | `forward/metrics.py` | the six columns |
 | `forward/ledger.py`, `seal.py` | the capture deadline and the hash checks |
 | `forward/cli.py`, `scaffold.py` | the `forward` command and its templates |
