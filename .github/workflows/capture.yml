@@ -37,6 +37,12 @@ jobs:
         run: |
           day=$(date -u +%F)
           echo "day=$day" >> "$GITHUB_OUTPUT"
+          # GitHub can start scheduled runs hours late. Outside the read window (20:00 to 22:00
+          # UTC) a capture would not count, and after midnight it would take tomorrow's file name.
+          h=$(date -u +%H)
+          if [ "$h" != "20" ] && [ "$h" != "21" ]; then
+            echo "outside the read window ($h:xx UTC); nothing to do"; echo "skip=1" >> "$GITHUB_OUTPUT"; exit 0
+          fi
           if [ -f "ledger-wt/ledger/$day.json" ]; then
             echo "already captured $day"; echo "skip=1" >> "$GITHUB_OUTPUT"; exit 0
           fi
