@@ -52,7 +52,10 @@ ladder (matched by ticker). Adding an entry or a task: [ADDING.md](ADDING.md).
   P(k) = Phi((k + 0.5 - mu) / sigma) - Phi((k - 0.5 - mu) / sigma).
 - **Inputs:** each model's hourly 2 m temperature from Open-Meteo, maximum over the station's
   local day (at least 20 hours present). Archived previous-day runs fit the entries; live runs
-  captured at the read are what a round scores.
+  captured at the read are what a round scores. The archived values are each from the run started 24 h before the hour (checked
+  against Open-Meteo's exact-run archive), so for afternoon hours they come from a run published
+  after the read: fine for fitting, which only needs the forecast-to-truth relation, but the dry
+  run's scores are slightly optimistic for every entry.
 - **isotherm (ladder entry, live):** at the read, `GET /ladder/{city}?day=D` on isotherm's public
   API for each of the 7 stations it serves, stored without the market's quotes (bid, ask and market probability are dropped, since the ledger is public); the bucket probabilities are its
   `p_model`. `GET /health` before and after the calls must report the entered model hash

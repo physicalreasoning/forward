@@ -24,7 +24,11 @@ prices) on real outcomes, and every entry reports the same six columns:
 ## Results so far
 
 Both are **dry runs** on past data: the pipeline is the sealed one, but the outcomes were known
-when it was built. The sealed rounds below test whether the findings hold on outcomes nobody
+when it was built. The dry run's model inputs are Open-Meteo's archived previous-day runs, each
+from the run started 24 hours before the hour it forecasts; for afternoon hours that run appears
+shortly after the 20:00 UTC read, so these inputs are a few hours fresher than a live capture can
+be. That flatters every weather entry a little, the same way for each; the sealed rounds use
+only what was captured at the read. The sealed rounds below test whether the findings hold on outcomes nobody
 could have seen.
 
 **Task 1, station highs** (19 NWS stations, 2026-07-01 to 2026-10-09, 1,917 station-days).
