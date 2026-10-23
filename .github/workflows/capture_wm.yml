@@ -1,0 +1,67 @@
+name: capture-wm
+# Backup for the world-model track's daily capture (scripts/capture_wm.py), which normally runs on
+# a maintainer's machine at 20:00 UTC. Each try exits at once if the day's manifest is already on
+# the ledger-wm branch; the release asset is never overwritten, so the first upload is kept.
+on:
+  schedule:
+    - cron: "17,32,47 20 * * *"
+    - cron: "2,17,32 21 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Capture into a scratch directory; upload and commit nothing"
+        type: boolean
+        default: false
+permissions:
+  contents: write
+concurrency: capture-wm
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - name: Check out the ledger
+        run: git fetch -q origin ledger-wm && git worktree add -q ledger-wt FETCH_HEAD
+      - name: Dry run (manual test of the capture path)
+        if: inputs.dry_run
+        run: |
+          uv sync --locked
+          uv run scripts/capture_wm.py --out "$RUNNER_TEMP/dry"
+          ls -la "$RUNNER_TEMP/dry" && cat "$RUNNER_TEMP"/dry/wm/*.json | head -40
+      - name: Capture unless today is already on the ledger
+        if: ${{ !inputs.dry_run }}
+        id: cap
+        run: |
+          day=$(date -u +%F)
+          echo "day=$day" >> "$GITHUB_OUTPUT"
+          h=$(date -u +%H)
+          if [ "$h" != "20" ] && [ "$h" != "21" ]; then
+            echo "outside the read window ($h:xx UTC); nothing to do"; echo "skip=1" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if [ -f "ledger-wt/wm/$day.json" ]; then
+            echo "already captured $day"; echo "skip=1" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          uv sync --locked
+          uv run scripts/capture_wm.py --out "$RUNNER_TEMP/cap"
+          if ! gh release upload wm-ledger "$RUNNER_TEMP/cap/wm-$day.parquet"; then
+            echo "asset already uploaded by another capture; keeping it"; echo "skip=1" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          cp "$RUNNER_TEMP/cap/wm/$day.json" "ledger-wt/wm/$day.json"
+      - name: Commit and push
+        if: ${{ !inputs.dry_run && steps.cap.outputs.skip != '1' }}
+        run: |
+          cd ledger-wt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898299+github-actions[bot]@users.noreply.github.com"
+          git add "wm/${{ steps.cap.outputs.day }}.json"
+          git commit -qm "Capture ${{ steps.cap.outputs.day }} (backup run)"
+          for i in 1 2 3; do
+            git push -q origin HEAD:refs/heads/ledger-wm && exit 0
+            git fetch -q origin ledger-wm && git rebase -q FETCH_HEAD; sleep 20
+          done
+          exit 1
