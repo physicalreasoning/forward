@@ -1,0 +1,20 @@
+{
+ "created_at": "2026-10-27T01:46:10+00:00",
+ "id": "wm1-persistence",
+ "family": "wm1",
+ "kind": "sampler",
+ "summary": "today's anomaly from the diurnal climatology, plus analogue-week residuals",
+ "inputs": [
+  "truth"
+ ],
+ "K": 50,
+ "leads": 168,
+ "variables": [
+  "tmpf"
+ ],
+ "code": {
+  "entries/wm1/persistence/entry.py": "46890ce00bab2e215edfae53d378dd1b5b9bb1052fd09c24bd9f83d9d0966fc2",
+  "forward/wm/baselines.py": "2708b99119f09615bdafe3f3755ce982fc8bd3d7546b66b0b991cd977e43577c"
+ },
+ "weights": null
+}
