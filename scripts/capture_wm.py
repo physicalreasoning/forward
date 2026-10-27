@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Capture every ensemble member's 7-day trajectory at the 19 stations, at the read (20:00 UTC).
+"""Capture every ensemble member's 8-day trajectory at the 19 stations, at the read (20:00 UTC).
 
 The world-model track's inputs (forward/wm/ensembles.py). Open-Meteo archives no past ensemble
-runs, so this is the only record. A day is about 0.9 MB, too large to commit daily, so it is
+runs, so this is the only record. A day is about 1 MB, too large to commit daily, so it is
 written as two files:
 
 - `wm-YYYY-MM-DD.parquet`: the trajectories, uploaded as an asset of the `wm-ledger` release;
@@ -27,6 +27,10 @@ from forward import DATA
 from forward.stations import STATIONS
 from forward.wm import ensembles
 
+# Open-Meteo serves whole UTC days from 00:00 on the read's day, so seven days end at lead 147
+# after the 20:00 UTC read; eight reach WM-1's 168 h (docs/WM1_DRYRUN.md).
+DAYS = 8
+
 
 def main():
     ap = argparse.ArgumentParser()
@@ -38,7 +42,7 @@ def main():
     for name, (mid, domain) in ensembles.MODELS.items():
         try:
             run = ensembles.meta(domain)  # before the data: the run read can only be this one or newer
-            d = ensembles.fetch(STATIONS, name)
+            d = ensembles.fetch(STATIONS, name, days=DAYS)
             parts.append(d)
             man["models"][name] = {"open_meteo": mid, **run, "members": int(d.member.nunique())}
         except Exception as ex:  # noqa: BLE001 (one model failing must not lose the rest)
