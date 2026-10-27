@@ -1,0 +1,20 @@
+{
+ "created_at": "2026-10-27T01:46:10+00:00",
+ "id": "wm1-climatology",
+ "family": "wm1",
+ "kind": "sampler",
+ "summary": "past ten years' observed weeks at the same time of year, offsets up to two days",
+ "inputs": [
+  "truth"
+ ],
+ "K": 50,
+ "leads": 168,
+ "variables": [
+  "tmpf"
+ ],
+ "code": {
+  "entries/wm1/climatology/entry.py": "98fe77ecee66bb0540b486e1a84047c72449c9177dfd57a27fa0bc4d00e8b06f",
+  "forward/wm/baselines.py": "2708b99119f09615bdafe3f3755ce982fc8bd3d7546b66b0b991cd977e43577c"
+ },
+ "weights": null
+}

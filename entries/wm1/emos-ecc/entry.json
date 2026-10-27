@@ -1,0 +1,21 @@
+{
+ "created_at": "2026-10-27T01:46:10+00:00",
+ "id": "wm1-emos-ecc",
+ "family": "wm1",
+ "kind": "sampler",
+ "summary": "EMOS per lead block fit on captures verified before the init, reordered by ECC-Q",
+ "inputs": [
+  "ensembles",
+  "truth"
+ ],
+ "K": 50,
+ "leads": 168,
+ "variables": [
+  "tmpf"
+ ],
+ "code": {
+  "entries/wm1/emos-ecc/entry.py": "16f2107521b9a8cc5a0cbc36c0836c67fbb1737a5ec8692801e8de5479cf879f",
+  "forward/wm/baselines.py": "2708b99119f09615bdafe3f3755ce982fc8bd3d7546b66b0b991cd977e43577c"
+ },
+ "weights": null
+}

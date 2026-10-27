@@ -1,7 +1,9 @@
 # The world-model track
 
-**Status: design, with input capture running since 2026-10-23.** Nothing here is part of
-Round 1 or Round 2, and no file hashed for them is touched. The first sealed world-model round
+**Status (2026-10-27): input capture running since 2026-10-23; WM-1's entry interface,
+hash-checking runner and four baselines built, with a first dry run
+([WM1_DRYRUN.md](WM1_DRYRUN.md)).** Nothing here is part of Round 1 or Round 2, and no file
+hashed for them is touched. The first sealed world-model round
 is planned for Round 3 (March to April 2027), after an unsealed dry run.
 
 ## Why
@@ -84,22 +86,50 @@ BOM's ACCESS-GE is served but has not updated since June 2025, so it is left out
 metadata for ICON-EPS stopped updating on 2026-10-06 while its data stayed current (checked
 against IFS ENS), so its run times are not recorded.
 
-A day is about 0.86 MB, too large to commit daily. The parquet is an asset of the `wm-ledger`
-release; its sha256 and each model's run initialisation and availability times are committed to
+Captures through 2026-10-27 hold seven UTC days from 00:00 on the read's day, which end at
+lead 147 after the 20:00 UTC read; from the merge of the WM-1 dry run they hold eight, which
+reach 168 h for every model but ICON-EPS (WM1_DRYRUN.md). A day is about 1 MB, too large to
+commit daily. The parquet is an asset of the `wm-ledger` release; its sha256 and each model's run initialisation and availability times are committed to
 the `ledger-wm` branch the same evening. Capture runs on a maintainer's machine with a GitHub
 Actions backup (`capture_wm.yml`); an asset is never overwritten, so the first capture of a day
 is the one kept.
 
-## Entry interface (draft)
+## Entry interface (WM-1, built)
+
+A frozen entry is a directory, `entries/wm1/<name>/`, holding `entry.py` and a manifest,
+`entry.json`: id, family, created_at, declared inputs, the sha256 of every code file its
+forecasts depend on, the sha256 of its weights (if any), and the forecast shape it promises,
+`(K, stations, leads, variables)` = (50, 19, 168, 1) for WM-1 (`forward/wm/entry.py`).
 
 ```
-entry.yaml: name, family (wm1|wm2|wm3), kind (sampler|quantile|ladder|policy),
-            source (fixed|fit|live), weights [path or repo@revision, sha256],
-            runtime (uv.lock hash or OCI digest), resources (cpu | gpu minutes per read)
-predict(inputs, query) -> samples[K, ...] | quantiles | bucket probabilities
+predict(init_time, stations, inputs) -> float array [K, len(stations), 168, len(variables)]
 ```
 
-An entry is ranked only within the families it enters; there is no cross-family headline.
+`inputs` is the only door to data (`forward/wm/access.py`): `inputs.truth(station)` serves
+hourly ASOS truth for hours strictly before `init_time`, `inputs.ensembles(day)` a captured read
+on or before the init day (the init day's only if captured before 22:00 UTC), and any later
+request, or a source the manifest did not declare, raises `LeakageError`. While `predict` runs,
+network connections, subprocesses and opening files under the data directories are refused too.
+NaN means no forecast; a NaN in a scored window drops that row for every entry.
+
+The runner (`forward/wm/runner.py`) refuses an entry whose code or weights differ from its
+manifest, and, for a sealed round, one whose files were committed after the window's first init
+or have uncommitted changes. It writes each forecast as `.npy` with a record of its own sha256,
+the entry's manifest, code and weights hashes, and the shim's log of what was read. The leakage
+tests (`tests/test_wm_runner.py`) also rerun every baseline with the truth after the init and
+every later capture replaced by nonsense and require identical forecasts.
+
+Baselines, each such an entry (`forward/wm/baselines.py`):
+
+| Entry | What it is |
+| --- | --- |
+| `climatology` | the observed weeks that followed the same time of year in the past ten years, offsets up to two days (50 analogues) |
+| `persistence` | today's anomaly from the hourly climatology carried forward, plus the error that carrying forward made in the same 50 weeks |
+| `raw` | 50 members of the captured six-model ensemble, equal weight per model, the same members at every station |
+| `emos-ecc` | EMOS (Gneiting et al. 2005) per 24 h lead block with a per-station intercept, fit by minimum CRPS on captures verified before the init, reordered by ECC-Q (Schefzik et al. 2013) |
+
+Other families will get their own interfaces; an entry is ranked only within the families it
+enters, and there is no cross-family headline.
 
 ## Statistics
 
@@ -113,7 +143,8 @@ pooling across rounds follows a rule fixed in advance.
 
 - Now to 2026-10-31: capture daily; scores and truth; ship Round 1's freeze untouched.
 - November: WM-1 baselines and a dry run on the first captured weeks; the entry interface and
-  a hash-checking runner; WM-3 policy arm on recorded books (aggregate results only); MRMS
+  a hash-checking runner (built early, 2026-10-27; first dry run in WM1_DRYRUN.md, rerun as
+  truth arrives); WM-3 policy arm on recorded books (aggregate results only); MRMS
   prototype to size WM-2.
 - December: go or no-go for WM-1 as an exploratory family in Round 2 (freeze 2027-01-03).
 - Round 3 (March to April 2027): first sealed world-model round. Candidate hypotheses: a
@@ -144,6 +175,11 @@ pooling across rounds follows a rule fixed in advance.
   arXiv:2512.20761.
 - Ravuri, S. et al. (2021). Skilful precipitation nowcasting using deep generative models of
   radar. *Nature* 597.
+- Gneiting, T., Raftery, A. E., Westveld, A. H. and Goldman, T. (2005). Calibrated
+  probabilistic forecasting using ensemble model output statistics and minimum CRPS
+  estimation. *Monthly Weather Review* 133(5).
+- Schefzik, R., Thorarinsdottir, T. L. and Gneiting, T. (2013). Uncertainty quantification in
+  complex simulation models using ensemble copula coupling. *Statistical Science* 28(4).
 - Gneiting, T. and Ranjan, R. (2011). Comparing density forecasts using threshold- and
   quantile-weighted scoring rules. *JBES* 29(3).
 - Allen, S., Ginsbourger, D. and Ziegel, J. (2023). Evaluating forecasts for high-impact events

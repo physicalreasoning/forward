@@ -1,0 +1,20 @@
+{
+ "created_at": "2026-10-27T01:46:10+00:00",
+ "id": "wm1-raw",
+ "family": "wm1",
+ "kind": "sampler",
+ "summary": "50 members of the captured multi-model ensemble, equal weight per model",
+ "inputs": [
+  "ensembles"
+ ],
+ "K": 50,
+ "leads": 168,
+ "variables": [
+  "tmpf"
+ ],
+ "code": {
+  "entries/wm1/raw/entry.py": "849c315b537ccbc7bf526e5ec672406f885984b1b87d8dcf4305753134f125de",
+  "forward/wm/baselines.py": "2708b99119f09615bdafe3f3755ce982fc8bd3d7546b66b0b991cd977e43577c"
+ },
+ "weights": null
+}
