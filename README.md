@@ -149,6 +149,7 @@ do not need one.
 | `forward/entries.py`, `isotherm_live.py` | task 1 entries: the fitted gaussian ones, and isotherm (live, ladder) |
 | `forward/fills.py`, `fill_entries.py` | task 3: the counterfactual fill simulator and its entries |
 | `forward/metrics.py` | the six columns |
+| `forward/wm/`, `entries/wm1/` | the world-model track: captured ensembles, truth, scores, the WM-1 entry interface, runner and baselines ([design](docs/WORLD_MODEL_TRACK.md), [dry run](docs/WM1_DRYRUN.md)) |
 | `forward/ledger.py`, `seal.py` | the capture deadline and the hash checks |
 | `forward/cli.py`, `scaffold.py` | the `forward` command and its templates |
 | `scripts/` | build, capture, freeze, score, rehearse, leaderboard, results page |
