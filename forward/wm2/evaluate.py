@@ -50,8 +50,10 @@ def score(fc: dict[str, np.ndarray], y: np.ndarray, dates: list[str], leads) -> 
             yl, ml = y[:, :, li], ok[:, :, li]
             for s in POOLS:
                 c = scores.pooled_crps(xl, yl, ml, s)  # [init, tile, h, w]
-                per = np.nanmean(np.where(np.isfinite(c), c, np.nan).reshape(n_init, -1), axis=1)
-                good = np.isfinite(per)
+                flat = c.reshape(n_init, -1)
+                cnt = np.isfinite(flat).sum(axis=1)
+                per = np.where(cnt > 0, np.nansum(flat, axis=1) / np.maximum(cnt, 1), np.nan)
+                good = cnt > 0
                 rec[f"crps_{s}"].append(float(np.nanmean(c)) if np.isfinite(c).any() else None)
                 rec[f"crps_{s}_ci"].append(
                     metrics.block_ci(np.asarray(dates)[good], per[good]) if good.sum() > 1 else None
