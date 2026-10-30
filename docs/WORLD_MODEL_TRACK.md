@@ -55,7 +55,10 @@ after the 20:00 UTC read. Entries submit K = 50 joint sample trajectories per st
 around the stations, leads 10 minutes to 6 hours, scored by fair CRPS on pooled fields,
 fractions skill score, and rain at the station gauge. The family that lets video world models
 enter on real outcomes. Baselines from pysteps (Pulkkinen et al. 2019); DGMR (Ravuri et al.
-2021) as an entrant. Prototype only until WM-1 has run.
+2021) as an entrant. Prototype only until WM-1 has run. A prototype (2026-10-30, `forward/wm2/`,
+[WM2_PROTOTYPE.md](WM2_PROTOTYPE.md)) ran capture, truth, three baselines and scoring end to
+end on four days and six tiles; the draft spec it led to, with a 3 h primary horizon and K = 20,
+is [WM2_DRAFT.md](WM2_DRAFT.md).
 
 **WM-3: interventions on the order book.** Extends Task 3 (docs/TASK3_FILLS.md). A replay arm
 (fill of hypothetical passive orders), a policy arm (each entry ranks 6 to 8 fixed quoting
@@ -147,7 +150,7 @@ pooling across rounds follows a rule fixed in advance.
 - November: WM-1 baselines and a dry run on the first captured weeks; the entry interface and
   a hash-checking runner (built early, 2026-10-27; first dry run in WM1_DRYRUN.md, rerun as
   truth arrives); WM-3 policy arm on recorded books (aggregate results only); MRMS
-  prototype to size WM-2.
+  prototype to size WM-2 (built early, 2026-10-30: WM2_PROTOTYPE.md, WM2_DRAFT.md).
 - December: go or no-go for WM-1 as an exploratory family in Round 2 (freeze 2027-01-03).
 - Round 3 (March to April 2027): first sealed world-model round. Candidate hypotheses: a
   calibrated learned ensemble (AIFS ENS) beats the calibrated physics ensemble (IFS ENS) on the
