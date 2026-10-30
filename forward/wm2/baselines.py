@@ -12,9 +12,10 @@ seeded by the init time.
   years at offsets of up to two days (4 x 5 = 20 analogues; offsets of three days are a reserve
   for missing frames). Joint by construction: each sample is one real sequence of fields.
 - `advection`: Lagrangian persistence (Germann and Zawadzki 2002): the latest frame moved along
-  one motion vector per tile, estimated by phase correlation (Kuglin and Hines 1975) between the
-  last three frames, with the vector perturbed per sample (as STEPS perturbs motion, Bowler et
-  al. 2006) so the samples spread with lead time. Rain advected in from outside the context box
+  one motion vector per tile, the peak of the cross-correlation between consecutive frames of
+  the last three (a global form of TREC, Rinehart and Garvey 1978), with the vector perturbed
+  per sample (as STEPS perturbs motion, Bowler et al. 2006) so the samples spread with lead
+  time. Rain advected in from outside the context box
   is unknown and set to zero.
 """
 
@@ -91,12 +92,12 @@ def climatology(init_time, tiles, inputs) -> np.ndarray:
     return out
 
 
-def phase_shift(a: np.ndarray, b: np.ndarray) -> np.ndarray:
-    """(dy, dx) in pixels such that b(r) ~ a(r - d), by phase correlation with a parabolic peak."""
+def xcorr_shift(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    """(dy, dx) in pixels such that b(r) ~ a(r - d): the peak of the windowed cross-correlation,
+    refined to sub-pixel by a parabola through the peak and its neighbours."""
     wy = np.hanning(a.shape[0])[:, None] * np.hanning(a.shape[1])[None, :]
-    fa, fb = np.fft.rfft2(a * wy), np.fft.rfft2(b * wy)
-    r = fb * np.conj(fa)
-    c = np.fft.irfft2(r / np.maximum(np.abs(r), 1e-12), s=a.shape)
+    fa, fb = np.fft.rfft2((a - a.mean()) * wy), np.fft.rfft2((b - b.mean()) * wy)
+    c = np.fft.irfft2(fb * np.conj(fa), s=a.shape)
     i, j = np.unravel_index(np.argmax(c), c.shape)
     d = []
     for p, n, line in ((i, a.shape[0], c[:, j]), (j, a.shape[1], c[i, :])):
@@ -121,7 +122,7 @@ def motion(frames: np.ndarray) -> np.ndarray:
         if ((f > WET).mean(axis=(-1, -2)) < 0.005).any():
             continue
         g = np.log1p(np.where(f > WET, f, 0.0))
-        v[s] = np.mean([phase_shift(g[i], g[i + 1]) for i in range(n_t - 1)], axis=0)
+        v[s] = np.mean([xcorr_shift(g[i], g[i + 1]) for i in range(n_t - 1)], axis=0)
     return v
 
 
