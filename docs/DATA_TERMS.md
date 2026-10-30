@@ -14,6 +14,7 @@ Scope: the third-party data sources used by Physical Reasoning projects (forward
 | Open-Meteo | Weather forecasts and historical weather (where used) | Data: CC BY 4.0. Free API: non-commercial only, rate limited. Code: AGPLv3. | Yes | Yes | Yes, under CC BY 4.0 (check upstream model licences, e.g. UK Met Office is CC BY-SA) | Yes: link "Weather data by Open-Meteo.com" next to any display, plus licence link and change note |
 | Iowa Environmental Mesonet (IEM) | Archived NWS MOS forecasts, ASOS observations, NWS Daily Climate Reports (CLI, Kalshi's settlement source) | Public domain per IEM disclaimer | Yes | Yes | Yes | Not required; "would be appreciated" |
 | NOAA / NWS | Underlying source of MOS, CLI, ASOS data (via IEM) | Public domain unless noted | Yes | Yes | Yes | Not required; must not imply endorsement; 17 U.S.C. 403 notice if a copyrighted work consists predominantly of NWS material |
+| NOAA NODD (MRMS, GOES) | MRMS radar rain rate and GOES-19 imagery from the AWS Open Data Registry, for the WM-2 prototype (docs/WM2_DRAFT.md) | "Open to the public and can be used as desired" (registry entries, read 2026-10-30) | Yes | Yes | Yes, marked as modified when modified | Requested; must not imply endorsement; modified data must not be presented as original NOAA data |
 | Yahoo Finance | Hourly/daily prices for financial, commodity and crypto series (e.g. RB=F gasoline futures) via query1.finance.yahoo.com | Yahoo Terms of Service; Yahoo Finance data disclaimer: "You must not redistribute" | Unclear, likely acceptable for findings that do not reproduce the data, but ToS bars derivative works without permission | Unclear | No | Not applicable (no redistribution right); do not use Yahoo branding |
 | ECMWF open data | IFS/AIFS forecasts (directly or via Open-Meteo) | CC BY 4.0 plus ECMWF Terms of Use | Yes | Yes | Yes | Yes: specific ECMWF copyright, source, licence and disclaimer wording (see below) |
 
@@ -175,6 +176,14 @@ Page read: https://www.weather.gov/disclaimer. Relevant because NWS Daily Climat
 > As required by 17 U.S.C. § 403, third parties producing copyrighted works consisting predominantly of the material appearing in NWS Web pages must provide notice with such work(s) identifying the NWS material incorporated and stating that such material is not subject to copyright protection.
 
 > Use of the NWS name ("National Weather Service") and/or visual identifier are protected under trademark law and may not be used without permission from the NWS.
+
+## NOAA Open Data Dissemination (MRMS, GOES)
+
+Pages read on 2026-10-30: the AWS Open Data Registry entries for NOAA MRMS (https://registry.opendata.aws/noaa-mrms-pds/, source https://github.com/awslabs/open-data-registry/blob/main/datasets/noaa-mrms-pds.yaml) and NOAA GOES (noaa-goes.yaml in the same repository). Both carry the same licence text:
+
+> NOAA data disseminated through NODD are open to the public and can be used as desired. NOAA makes data openly available to ensure maximum use of our data, and to spur and encourage exploration and innovation throughout the industry. NOAA requests attribution for the use or dissemination of unaltered NOAA data. However, it is not permissible to state or imply endorsement by or affiliation with NOAA. If you modify NOAA data, you may not state or imply that it is original, unaltered NOAA data.
+
+The buckets (`s3://noaa-mrms-pds`, `s3://noaa-goes19`) are read anonymously over HTTPS; no account or key is involved. The MRMS registry entry also notes that the University of Oklahoma retains the right to commercially license the MRMS software; that concerns running the system, not using its published fields. What forward publishes from MRMS (aggregate scores; tiles if ever released) is averaged and cut, so it is labelled as modified and credited to NOAA MRMS without implying endorsement.
 
 ## Yahoo Finance
 
