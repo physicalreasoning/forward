@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" width="960" height="400" font-family="system-ui, sans-serif" font-size="12">
+<style>.bg{fill:#fcfcfb}.ink{fill:#0b0b0b}.mute{fill:#52514e}.grid{stroke:#e4e3df}.s0{stroke:#eb6834}.f0{fill:#eb6834}.s1{stroke:#2a78d6}.f1{fill:#2a78d6}.s2{stroke:#1baf7a}.f2{fill:#1baf7a}@media (prefers-color-scheme: dark){.bg{fill:#1a1a19}.ink{fill:#f0efec}.mute{fill:#c3c2b7}.grid{stroke:#3a3a37}.s0{stroke:#d95926}.f0{fill:#d95926}.s1{stroke:#3987e5}.f1{fill:#3987e5}.s2{stroke:#199e70}.f2{fill:#199e70}}</style>
+<rect class="bg" width="960" height="400"/>
+<text class="ink" x="48" y="24" font-size="14" font-weight="600">WM-2 prototype, not a result: 6 tiles, 16 inits, 2026-10-14 to 2026-10-17</text>
+<text class="ink" x="52" y="62" font-weight="600">Fair CRPS, 8 km pooling (mm/h, lower is better)</text>
+<line class="grid" x1="52" x2="352" y1="322.0" y2="322.0"/>
+<text class="mute" x="46" y="326.0" text-anchor="end">0.00</text>
+<line class="grid" x1="52" x2="352" y1="280.3" y2="280.3"/>
+<text class="mute" x="46" y="284.3" text-anchor="end">0.10</text>
+<line class="grid" x1="52" x2="352" y1="238.7" y2="238.7"/>
+<text class="mute" x="46" y="242.7" text-anchor="end">0.20</text>
+<line class="grid" x1="52" x2="352" y1="197.0" y2="197.0"/>
+<text class="mute" x="46" y="201.0" text-anchor="end">0.30</text>
+<line class="grid" x1="52" x2="352" y1="155.3" y2="155.3"/>
+<text class="mute" x="46" y="159.3" text-anchor="end">0.40</text>
+<line class="grid" x1="52" x2="352" y1="113.7" y2="113.7"/>
+<text class="mute" x="46" y="117.7" text-anchor="end">0.50</text>
+<line class="grid" x1="52" x2="352" y1="72.0" y2="72.0"/>
+<text class="mute" x="46" y="76.0" text-anchor="end">0.60</text>
+<text class="mute" x="52.0" y="340" text-anchor="middle">0</text>
+<text class="mute" x="102.0" y="340" text-anchor="middle">60</text>
+<text class="mute" x="152.0" y="340" text-anchor="middle">120</text>
+<text class="mute" x="202.0" y="340" text-anchor="middle">180</text>
+<text class="mute" x="252.0" y="340" text-anchor="middle">240</text>
+<text class="mute" x="302.0" y="340" text-anchor="middle">300</text>
+<text class="mute" x="352.0" y="340" text-anchor="middle">360</text>
+<text class="mute" x="202.0" y="358" text-anchor="middle">lead (minutes after the init)</text>
+<path class="s0" d="M60.3,222.0 L68.7,207.4 L77.0,196.2 L102.0,182.0 L127.0,161.6 L152.0,143.4 L202.0,125.2 L252.0,106.4 L302.0,112.5 L352.0,133.8" fill="none" stroke-width="2" stroke-linejoin="round"/>
+<circle class="f0" cx="60.3" cy="222.0" r="3"/>
+<circle class="f0" cx="68.7" cy="207.4" r="3"/>
+<circle class="f0" cx="77.0" cy="196.2" r="3"/>
+<circle class="f0" cx="102.0" cy="182.0" r="3"/>
+<circle class="f0" cx="127.0" cy="161.6" r="3"/>
+<circle class="f0" cx="152.0" cy="143.4" r="3"/>
+<circle class="f0" cx="202.0" cy="125.2" r="3"/>
+<circle class="f0" cx="252.0" cy="106.4" r="3"/>
+<circle class="f0" cx="302.0" cy="112.5" r="3"/>
+<circle class="f0" cx="352.0" cy="133.8" r="3"/>
+<path class="s1" d="M60.3,224.8 L68.7,225.6 L77.0,223.6 L102.0,224.4 L127.0,214.8 L152.0,196.7 L202.0,179.0 L252.0,168.6 L302.0,185.0 L352.0,209.4" fill="none" stroke-width="2" stroke-linejoin="round"/>
+<circle class="f1" cx="60.3" cy="224.8" r="3"/>
+<circle class="f1" cx="68.7" cy="225.6" r="3"/>
+<circle class="f1" cx="77.0" cy="223.6" r="3"/>
+<circle class="f1" cx="102.0" cy="224.4" r="3"/>
+<circle class="f1" cx="127.0" cy="214.8" r="3"/>
+<circle class="f1" cx="152.0" cy="196.7" r="3"/>
+<circle class="f1" cx="202.0" cy="179.0" r="3"/>
+<circle class="f1" cx="252.0" cy="168.6" r="3"/>
+<circle class="f1" cx="302.0" cy="185.0" r="3"/>
+<circle class="f1" cx="352.0" cy="209.4" r="3"/>
+<path class="s2" d="M60.3,256.4 L68.7,255.2 L77.0,251.2 L102.0,245.0 L127.0,230.4 L152.0,210.4 L202.0,193.4 L252.0,184.9 L302.0,195.3 L352.0,215.4" fill="none" stroke-width="2" stroke-linejoin="round"/>
+<circle class="f2" cx="60.3" cy="256.4" r="3"/>
+<circle class="f2" cx="68.7" cy="255.2" r="3"/>
+<circle class="f2" cx="77.0" cy="251.2" r="3"/>
+<circle class="f2" cx="102.0" cy="245.0" r="3"/>
+<circle class="f2" cx="127.0" cy="230.4" r="3"/>
+<circle class="f2" cx="152.0" cy="210.4" r="3"/>
+<circle class="f2" cx="202.0" cy="193.4" r="3"/>
+<circle class="f2" cx="252.0" cy="184.9" r="3"/>
+<circle class="f2" cx="302.0" cy="195.3" r="3"/>
+<circle class="f2" cx="352.0" cy="215.4" r="3"/>
+<text class="ink" x="360.0" y="137.8">persistence</text>
+<text class="ink" x="360.0" y="213.4">climatology</text>
+<text class="ink" x="360.0" y="228.4">advection</text>
+<text class="ink" x="530" y="62" font-weight="600">FSS, 1 mm/h, 34 km (higher is better)</text>
+<line class="grid" x1="530" x2="830" y1="322.0" y2="322.0"/>
+<text class="mute" x="524" y="326.0" text-anchor="end">0.0</text>
+<line class="grid" x1="530" x2="830" y1="272.0" y2="272.0"/>
+<text class="mute" x="524" y="276.0" text-anchor="end">0.2</text>
+<line class="grid" x1="530" x2="830" y1="222.0" y2="222.0"/>
+<text class="mute" x="524" y="226.0" text-anchor="end">0.4</text>
+<line class="grid" x1="530" x2="830" y1="172.0" y2="172.0"/>
+<text class="mute" x="524" y="176.0" text-anchor="end">0.6</text>
+<line class="grid" x1="530" x2="830" y1="122.0" y2="122.0"/>
+<text class="mute" x="524" y="126.0" text-anchor="end">0.8</text>
+<line class="grid" x1="530" x2="830" y1="72.0" y2="72.0"/>
+<text class="mute" x="524" y="76.0" text-anchor="end">1.0</text>
+<text class="mute" x="530.0" y="340" text-anchor="middle">0</text>
+<text class="mute" x="580.0" y="340" text-anchor="middle">60</text>
+<text class="mute" x="630.0" y="340" text-anchor="middle">120</text>
+<text class="mute" x="680.0" y="340" text-anchor="middle">180</text>
+<text class="mute" x="730.0" y="340" text-anchor="middle">240</text>
+<text class="mute" x="780.0" y="340" text-anchor="middle">300</text>
+<text class="mute" x="830.0" y="340" text-anchor="middle">360</text>
+<text class="mute" x="680.0" y="358" text-anchor="middle">lead (minutes after the init)</text>
+<path class="s0" d="M538.3,98.7 L546.7,113.8 L555.0,125.5 L580.0,150.6 L605.0,169.6 L630.0,182.4 L680.0,196.6 L730.0,202.0 L780.0,226.2 L830.0,236.0" fill="none" stroke-width="2" stroke-linejoin="round"/>
+<circle class="f0" cx="538.3" cy="98.7" r="3"/>
+<circle class="f0" cx="546.7" cy="113.8" r="3"/>
+<circle class="f0" cx="555.0" cy="125.5" r="3"/>
+<circle class="f0" cx="580.0" cy="150.6" r="3"/>
+<circle class="f0" cx="605.0" cy="169.6" r="3"/>
+<circle class="f0" cx="630.0" cy="182.4" r="3"/>
+<circle class="f0" cx="680.0" cy="196.6" r="3"/>
+<circle class="f0" cx="730.0" cy="202.0" r="3"/>
+<circle class="f0" cx="780.0" cy="226.2" r="3"/>
+<circle class="f0" cx="830.0" cy="236.0" r="3"/>
+<path class="s1" d="M538.3,308.6 L546.7,308.3 L555.0,307.9 L580.0,307.2 L605.0,306.8 L630.0,306.4 L680.0,308.6 L730.0,310.3 L780.0,309.4 L830.0,309.3" fill="none" stroke-width="2" stroke-linejoin="round"/>
+<circle class="f1" cx="538.3" cy="308.6" r="3"/>
+<circle class="f1" cx="546.7" cy="308.3" r="3"/>
+<circle class="f1" cx="555.0" cy="307.9" r="3"/>
+<circle class="f1" cx="580.0" cy="307.2" r="3"/>
+<circle class="f1" cx="605.0" cy="306.8" r="3"/>
+<circle class="f1" cx="630.0" cy="306.4" r="3"/>
+<circle class="f1" cx="680.0" cy="308.6" r="3"/>
+<circle class="f1" cx="730.0" cy="310.3" r="3"/>
+<circle class="f1" cx="780.0" cy="309.4" r="3"/>
+<circle class="f1" cx="830.0" cy="309.3" r="3"/>
+<path class="s2" d="M538.3,88.3 L546.7,95.1 L555.0,101.3 L580.0,119.8 L605.0,144.2 L630.0,166.9 L680.0,211.7 L730.0,237.1 L780.0,262.0 L830.0,275.8" fill="none" stroke-width="2" stroke-linejoin="round"/>
+<circle class="f2" cx="538.3" cy="88.3" r="3"/>
+<circle class="f2" cx="546.7" cy="95.1" r="3"/>
+<circle class="f2" cx="555.0" cy="101.3" r="3"/>
+<circle class="f2" cx="580.0" cy="119.8" r="3"/>
+<circle class="f2" cx="605.0" cy="144.2" r="3"/>
+<circle class="f2" cx="630.0" cy="166.9" r="3"/>
+<circle class="f2" cx="680.0" cy="211.7" r="3"/>
+<circle class="f2" cx="730.0" cy="237.1" r="3"/>
+<circle class="f2" cx="780.0" cy="262.0" r="3"/>
+<circle class="f2" cx="830.0" cy="275.8" r="3"/>
+<text class="ink" x="838.0" y="240.0">persistence</text>
+<text class="ink" x="838.0" y="279.8">advection</text>
+<text class="ink" x="838.0" y="313.3">climatology</text>
+</svg>
