@@ -167,14 +167,21 @@ def test_scores_reduce_and_reward_the_truth():
 
 def test_evaluate_uses_the_same_cells_for_every_entry():
     rng = np.random.default_rng(0)
-    y = rng.gamma(0.5, 2.0, (2, 1, 3, 16, 16))
+    y = rng.gamma(0.5, 2.0, (2, 1, 3, 16, 16))  # [init, tile, lead, H, W]
     y[0, 0, 1, :2] = np.nan
-    a = rng.gamma(0.5, 2.0, (2, 4, 1, 3, 16, 16))
+    a = rng.gamma(0.5, 2.0, (2, 4, 1, 3, 16, 16))  # [init, K, tile, lead, H, W]
     b = a.copy()
     b[1, :, 0, 2, 5, 5] = np.nan
-    res = evaluate.score({"a": a, "b": b}, y, ["d1", "d2"], [10, 20, 30])
+    stats = [evaluate.init_stats({"a": a[i], "b": b[i]}, y[i], points=[(8, 8)]) for i in range(2)]
+    res = evaluate.combine(stats, ["d1", "d2"], [10, 20, 30])
     assert res["cells"] == y.size - 32 - 1
-    assert res["entries"]["a"]["energy"][1] is not None  # one row of two survives at lead 2
+    ea = res["entries"]["a"]
+    assert ea["energy_rows"] == [2, 1, 1]  # a row with any unscored cell is dropped for everyone
+    assert ea["station_rows"] == [2, 2, 2]
+    assert res["entries"]["b"]["crps_1"][2] == pytest.approx(ea["crps_1"][2])  # same cells
+    perfect = {"p": np.repeat(y[0][None], 3, axis=0)}
+    one = evaluate.combine([evaluate.init_stats(perfect, y[0])], ["d1"], [10, 20, 30])
+    assert one["entries"]["p"]["fss_1_5"][0] == pytest.approx(1.0)
 
 
 def test_store_capture_writes_hash_checked_days(tmp_path, monkeypatch):
