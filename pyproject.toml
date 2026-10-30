@@ -33,9 +33,10 @@ allow-direct-references = true
 
 [dependency-groups]
 dev = ["pytest>=8.3", "ruff>=0.7"]
+wm2 = ["pillow>=10"]  # decodes MRMS GRIB2 (PNG-packed), forward/wm2/mrms.py
 
 [tool.uv]
-default-groups = ["dev"]
+default-groups = ["dev", "wm2"]
 
 [tool.ruff]
 line-length = 110
