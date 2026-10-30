@@ -74,7 +74,8 @@ class Store:
             if list(z["tiles"]) != self.keys:
                 raise ValueError(f"{npz.name} holds tiles {list(z['tiles'])}, store wants {self.keys}")
             times = pd.to_datetime(z["times"])
-            self._cache[day] = (man, {t: z["q"][i] for i, t in enumerate(times)})
+            q = z["q"]  # decompress once, not once per frame
+            self._cache[day] = (man, {t: q[i] for i, t in enumerate(times)})
         return self._cache[day]
 
     def times(self) -> list[pd.Timestamp]:
