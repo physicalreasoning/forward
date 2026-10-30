@@ -2,24 +2,22 @@
 <style>.bg{fill:#fcfcfb}.ink{fill:#0b0b0b}.mute{fill:#52514e}.grid{stroke:#e4e3df}.band{fill:#f0efec}.rule{stroke:#52514e}.s0{stroke:#2a78d6}.f0{fill:#2a78d6}.s1{stroke:#eb6834}.f1{fill:#eb6834}.s2{stroke:#1baf7a}.f2{fill:#1baf7a}.s3{stroke:#eda100}.f3{fill:#eda100}@media (prefers-color-scheme: dark){.bg{fill:#1a1a19}.ink{fill:#f0efec}.mute{fill:#c3c2b7}.grid{stroke:#3a3a37}.band{fill:#262624}.rule{stroke:#c3c2b7}.s0{stroke:#3987e5}.f0{fill:#3987e5}.s1{stroke:#d95926}.f1{fill:#d95926}.s2{stroke:#199e70}.f2{fill:#199e70}.s3{stroke:#c98500}.f3{fill:#c98500}}</style>
 <rect class="bg" width="760" height="380"/>
 <text class="ink" x="48" y="22" font-size="14" font-weight="600">Fair CRPS (deg F) by lead: WM-1 dry run, a pipeline check, not a result</text>
-<rect class="band" x="327.5" y="44" width="322.5" height="290"/>
-<text class="mute" x="488.8" y="60" text-anchor="middle">no truth yet</text>
+<rect class="band" x="585.5" y="44" width="64.5" height="290"/>
+<text class="mute" x="617.8" y="60" text-anchor="middle">no truth yet</text>
 <line class="grid" x1="48" x2="650" y1="334.0" y2="334.0"/>
 <text class="mute" x="42" y="338.0" text-anchor="end">0</text>
-<line class="grid" x1="48" x2="650" y1="292.6" y2="292.6"/>
-<text class="mute" x="42" y="296.6" text-anchor="end">1</text>
-<line class="grid" x1="48" x2="650" y1="251.1" y2="251.1"/>
-<text class="mute" x="42" y="255.1" text-anchor="end">2</text>
-<line class="grid" x1="48" x2="650" y1="209.7" y2="209.7"/>
-<text class="mute" x="42" y="213.7" text-anchor="end">3</text>
-<line class="grid" x1="48" x2="650" y1="168.3" y2="168.3"/>
-<text class="mute" x="42" y="172.3" text-anchor="end">4</text>
-<line class="grid" x1="48" x2="650" y1="126.9" y2="126.9"/>
-<text class="mute" x="42" y="130.9" text-anchor="end">5</text>
-<line class="grid" x1="48" x2="650" y1="85.4" y2="85.4"/>
-<text class="mute" x="42" y="89.4" text-anchor="end">6</text>
+<line class="grid" x1="48" x2="650" y1="285.7" y2="285.7"/>
+<text class="mute" x="42" y="289.7" text-anchor="end">1</text>
+<line class="grid" x1="48" x2="650" y1="237.3" y2="237.3"/>
+<text class="mute" x="42" y="241.3" text-anchor="end">2</text>
+<line class="grid" x1="48" x2="650" y1="189.0" y2="189.0"/>
+<text class="mute" x="42" y="193.0" text-anchor="end">3</text>
+<line class="grid" x1="48" x2="650" y1="140.7" y2="140.7"/>
+<text class="mute" x="42" y="144.7" text-anchor="end">4</text>
+<line class="grid" x1="48" x2="650" y1="92.3" y2="92.3"/>
+<text class="mute" x="42" y="96.3" text-anchor="end">5</text>
 <line class="grid" x1="48" x2="650" y1="44.0" y2="44.0"/>
-<text class="mute" x="42" y="48.0" text-anchor="end">7</text>
+<text class="mute" x="42" y="48.0" text-anchor="end">6</text>
 <text class="mute" x="48.0" y="352" text-anchor="middle">0</text>
 <text class="mute" x="134.0" y="352" text-anchor="middle">24</text>
 <text class="mute" x="220.0" y="352" text-anchor="middle">48</text>
@@ -31,64 +29,112 @@
 <text class="mute" x="349.0" y="372" text-anchor="middle">lead (hours after the 20:00 UTC read)</text>
 <line class="rule" x1="574.8" x2="574.8" y1="44" y2="334" stroke-dasharray="4 3" stroke-width="1"/>
 <text class="mute" x="578.8" y="78">captures end (147 h)</text>
-<path class="s0" d="M58.8,188.2 L80.2,188.9 L101.8,198.0 L123.2,198.3 L144.8,195.6 L166.2,207.6 L187.8,217.5 L209.2,206.5 L230.7,206.7 L252.2,220.8 L273.8,231.8 L295.2,204.9 L316.8,198.4" fill="none" stroke-width="2" stroke-linejoin="round"/>
-<circle class="f0" cx="58.8" cy="188.2" r="3"/>
-<circle class="f0" cx="80.2" cy="188.9" r="3"/>
-<circle class="f0" cx="101.8" cy="198.0" r="3"/>
-<circle class="f0" cx="123.2" cy="198.3" r="3"/>
-<circle class="f0" cx="144.8" cy="195.6" r="3"/>
-<circle class="f0" cx="166.2" cy="207.6" r="3"/>
-<circle class="f0" cx="187.8" cy="217.5" r="3"/>
-<circle class="f0" cx="209.2" cy="206.5" r="3"/>
-<circle class="f0" cx="230.7" cy="206.7" r="3"/>
-<circle class="f0" cx="252.2" cy="220.8" r="3"/>
-<circle class="f0" cx="273.8" cy="231.8" r="3"/>
-<circle class="f0" cx="295.2" cy="204.9" r="3"/>
-<circle class="f0" cx="316.8" cy="198.4" r="3"/>
-<path class="s1" d="M58.8,272.5 L80.2,230.9 L101.8,212.5 L123.2,226.0 L144.8,197.8 L166.2,198.3 L187.8,197.0 L209.2,174.6 L230.7,164.2 L252.2,190.5 L273.8,188.3 L295.2,122.6 L316.8,87.7" fill="none" stroke-width="2" stroke-linejoin="round"/>
-<circle class="f1" cx="58.8" cy="272.5" r="3"/>
-<circle class="f1" cx="80.2" cy="230.9" r="3"/>
-<circle class="f1" cx="101.8" cy="212.5" r="3"/>
-<circle class="f1" cx="123.2" cy="226.0" r="3"/>
-<circle class="f1" cx="144.8" cy="197.8" r="3"/>
-<circle class="f1" cx="166.2" cy="198.3" r="3"/>
-<circle class="f1" cx="187.8" cy="197.0" r="3"/>
-<circle class="f1" cx="209.2" cy="174.6" r="3"/>
-<circle class="f1" cx="230.7" cy="164.2" r="3"/>
-<circle class="f1" cx="252.2" cy="190.5" r="3"/>
-<circle class="f1" cx="273.8" cy="188.3" r="3"/>
-<circle class="f1" cx="295.2" cy="122.6" r="3"/>
-<circle class="f1" cx="316.8" cy="87.7" r="3"/>
-<path class="s2" d="M58.8,278.0 L80.2,263.1 L101.8,267.4 L123.2,291.0 L144.8,272.3 L166.2,264.0 L187.8,269.0 L209.2,287.5 L230.7,269.4 L252.2,262.3 L273.8,262.3 L295.2,281.6 L316.8,261.6" fill="none" stroke-width="2" stroke-linejoin="round"/>
-<circle class="f2" cx="58.8" cy="278.0" r="3"/>
-<circle class="f2" cx="80.2" cy="263.1" r="3"/>
-<circle class="f2" cx="101.8" cy="267.4" r="3"/>
-<circle class="f2" cx="123.2" cy="291.0" r="3"/>
-<circle class="f2" cx="144.8" cy="272.3" r="3"/>
-<circle class="f2" cx="166.2" cy="264.0" r="3"/>
-<circle class="f2" cx="187.8" cy="269.0" r="3"/>
-<circle class="f2" cx="209.2" cy="287.5" r="3"/>
-<circle class="f2" cx="230.7" cy="269.4" r="3"/>
-<circle class="f2" cx="252.2" cy="262.3" r="3"/>
-<circle class="f2" cx="273.8" cy="262.3" r="3"/>
-<circle class="f2" cx="295.2" cy="281.6" r="3"/>
-<circle class="f2" cx="316.8" cy="261.6" r="3"/>
-<path class="s3" d="M58.8,285.2 L80.2,279.0 L101.8,283.5 L123.2,288.3 L144.8,279.3 L166.2,275.1 L187.8,278.7 L209.2,281.6 L230.7,271.9 L252.2,263.5 L273.8,261.7 L295.2,283.2 L316.8,260.8" fill="none" stroke-width="2" stroke-linejoin="round"/>
-<circle class="f3" cx="58.8" cy="285.2" r="3"/>
-<circle class="f3" cx="80.2" cy="279.0" r="3"/>
-<circle class="f3" cx="101.8" cy="283.5" r="3"/>
-<circle class="f3" cx="123.2" cy="288.3" r="3"/>
-<circle class="f3" cx="144.8" cy="279.3" r="3"/>
-<circle class="f3" cx="166.2" cy="275.1" r="3"/>
-<circle class="f3" cx="187.8" cy="278.7" r="3"/>
-<circle class="f3" cx="209.2" cy="281.6" r="3"/>
-<circle class="f3" cx="230.7" cy="271.9" r="3"/>
-<circle class="f3" cx="252.2" cy="263.5" r="3"/>
-<circle class="f3" cx="273.8" cy="261.7" r="3"/>
-<circle class="f3" cx="295.2" cy="283.2" r="3"/>
-<circle class="f3" cx="316.8" cy="260.8" r="3"/>
-<text class="ink" x="324.8" y="91.7">persistence</text>
-<text class="ink" x="324.8" y="202.4">climatology</text>
-<text class="ink" x="324.8" y="264.8">emos-ecc</text>
-<text class="ink" x="324.8" y="279.8">raw</text>
+<path class="s0" d="M58.8,163.0 L80.2,167.3 L101.8,173.0 L123.2,167.9 L144.8,167.0 L166.2,176.5 L187.8,181.6 L209.2,170.1 L230.7,170.4 L252.2,177.7 L273.8,181.6 L295.2,165.9 L316.8,164.6 L338.2,169.7 L359.8,170.6 L381.2,160.1 L402.8,157.9 L424.2,155.0 L445.8,151.3 L467.2,144.0 L488.7,145.4 L510.3,143.7 L531.8,143.6 L553.2,137.5 L574.8,142.6" fill="none" stroke-width="2" stroke-linejoin="round"/>
+<circle class="f0" cx="58.8" cy="163.0" r="3"/>
+<circle class="f0" cx="80.2" cy="167.3" r="3"/>
+<circle class="f0" cx="101.8" cy="173.0" r="3"/>
+<circle class="f0" cx="123.2" cy="167.9" r="3"/>
+<circle class="f0" cx="144.8" cy="167.0" r="3"/>
+<circle class="f0" cx="166.2" cy="176.5" r="3"/>
+<circle class="f0" cx="187.8" cy="181.6" r="3"/>
+<circle class="f0" cx="209.2" cy="170.1" r="3"/>
+<circle class="f0" cx="230.7" cy="170.4" r="3"/>
+<circle class="f0" cx="252.2" cy="177.7" r="3"/>
+<circle class="f0" cx="273.8" cy="181.6" r="3"/>
+<circle class="f0" cx="295.2" cy="165.9" r="3"/>
+<circle class="f0" cx="316.8" cy="164.6" r="3"/>
+<circle class="f0" cx="338.2" cy="169.7" r="3"/>
+<circle class="f0" cx="359.8" cy="170.6" r="3"/>
+<circle class="f0" cx="381.2" cy="160.1" r="3"/>
+<circle class="f0" cx="402.8" cy="157.9" r="3"/>
+<circle class="f0" cx="424.2" cy="155.0" r="3"/>
+<circle class="f0" cx="445.8" cy="151.3" r="3"/>
+<circle class="f0" cx="467.2" cy="144.0" r="3"/>
+<circle class="f0" cx="488.7" cy="145.4" r="3"/>
+<circle class="f0" cx="510.3" cy="143.7" r="3"/>
+<circle class="f0" cx="531.8" cy="143.6" r="3"/>
+<circle class="f0" cx="553.2" cy="137.5" r="3"/>
+<circle class="f0" cx="574.8" cy="142.6" r="3"/>
+<path class="s1" d="M58.8,267.4 L80.2,219.3 L101.8,197.3 L123.2,206.1 L144.8,181.5 L166.2,180.4 L187.8,173.4 L209.2,161.9 L230.7,149.0 L252.2,160.4 L273.8,162.5 L295.2,148.5 L316.8,134.4 L338.2,157.3 L359.8,161.8 L381.2,160.2 L402.8,162.6 L424.2,159.4 L445.8,152.7 L467.2,131.5 L488.7,134.7 L510.3,137.2 L531.8,120.7 L553.2,92.3 L574.8,90.9" fill="none" stroke-width="2" stroke-linejoin="round"/>
+<circle class="f1" cx="58.8" cy="267.4" r="3"/>
+<circle class="f1" cx="80.2" cy="219.3" r="3"/>
+<circle class="f1" cx="101.8" cy="197.3" r="3"/>
+<circle class="f1" cx="123.2" cy="206.1" r="3"/>
+<circle class="f1" cx="144.8" cy="181.5" r="3"/>
+<circle class="f1" cx="166.2" cy="180.4" r="3"/>
+<circle class="f1" cx="187.8" cy="173.4" r="3"/>
+<circle class="f1" cx="209.2" cy="161.9" r="3"/>
+<circle class="f1" cx="230.7" cy="149.0" r="3"/>
+<circle class="f1" cx="252.2" cy="160.4" r="3"/>
+<circle class="f1" cx="273.8" cy="162.5" r="3"/>
+<circle class="f1" cx="295.2" cy="148.5" r="3"/>
+<circle class="f1" cx="316.8" cy="134.4" r="3"/>
+<circle class="f1" cx="338.2" cy="157.3" r="3"/>
+<circle class="f1" cx="359.8" cy="161.8" r="3"/>
+<circle class="f1" cx="381.2" cy="160.2" r="3"/>
+<circle class="f1" cx="402.8" cy="162.6" r="3"/>
+<circle class="f1" cx="424.2" cy="159.4" r="3"/>
+<circle class="f1" cx="445.8" cy="152.7" r="3"/>
+<circle class="f1" cx="467.2" cy="131.5" r="3"/>
+<circle class="f1" cx="488.7" cy="134.7" r="3"/>
+<circle class="f1" cx="510.3" cy="137.2" r="3"/>
+<circle class="f1" cx="531.8" cy="120.7" r="3"/>
+<circle class="f1" cx="553.2" cy="92.3" r="3"/>
+<circle class="f1" cx="574.8" cy="90.9" r="3"/>
+<path class="s2" d="M58.8,267.7 L80.2,255.0 L101.8,256.7 L123.2,280.7 L144.8,262.5 L166.2,255.0 L187.8,255.7 L209.2,275.4 L230.7,258.3 L252.2,252.1 L273.8,252.0 L295.2,268.8 L316.8,253.7 L338.2,250.5 L359.8,251.1 L381.2,260.7 L402.8,244.6 L424.2,243.5 L445.8,249.8 L467.2,241.0 L488.7,233.7 L510.3,236.6 L531.8,239.2 L553.2,228.3 L574.8,227.9" fill="none" stroke-width="2" stroke-linejoin="round"/>
+<circle class="f2" cx="58.8" cy="267.7" r="3"/>
+<circle class="f2" cx="80.2" cy="255.0" r="3"/>
+<circle class="f2" cx="101.8" cy="256.7" r="3"/>
+<circle class="f2" cx="123.2" cy="280.7" r="3"/>
+<circle class="f2" cx="144.8" cy="262.5" r="3"/>
+<circle class="f2" cx="166.2" cy="255.0" r="3"/>
+<circle class="f2" cx="187.8" cy="255.7" r="3"/>
+<circle class="f2" cx="209.2" cy="275.4" r="3"/>
+<circle class="f2" cx="230.7" cy="258.3" r="3"/>
+<circle class="f2" cx="252.2" cy="252.1" r="3"/>
+<circle class="f2" cx="273.8" cy="252.0" r="3"/>
+<circle class="f2" cx="295.2" cy="268.8" r="3"/>
+<circle class="f2" cx="316.8" cy="253.7" r="3"/>
+<circle class="f2" cx="338.2" cy="250.5" r="3"/>
+<circle class="f2" cx="359.8" cy="251.1" r="3"/>
+<circle class="f2" cx="381.2" cy="260.7" r="3"/>
+<circle class="f2" cx="402.8" cy="244.6" r="3"/>
+<circle class="f2" cx="424.2" cy="243.5" r="3"/>
+<circle class="f2" cx="445.8" cy="249.8" r="3"/>
+<circle class="f2" cx="467.2" cy="241.0" r="3"/>
+<circle class="f2" cx="488.7" cy="233.7" r="3"/>
+<circle class="f2" cx="510.3" cy="236.6" r="3"/>
+<circle class="f2" cx="531.8" cy="239.2" r="3"/>
+<circle class="f2" cx="553.2" cy="228.3" r="3"/>
+<circle class="f2" cx="574.8" cy="227.9" r="3"/>
+<path class="s3" d="M58.8,277.0 L80.2,276.1 L101.8,279.1 L123.2,276.5 L144.8,269.6 L166.2,270.0 L187.8,274.9 L209.2,267.7 L230.7,259.3 L252.2,257.4 L273.8,262.2 L295.2,260.6 L316.8,255.2 L338.2,259.9 L359.8,266.2 L381.2,261.5 L402.8,247.1 L424.2,256.8 L445.8,260.9 L467.2,239.2 L488.7,234.7 L510.3,242.2 L531.8,244.3 L553.2,227.6 L574.8,227.7" fill="none" stroke-width="2" stroke-linejoin="round"/>
+<circle class="f3" cx="58.8" cy="277.0" r="3"/>
+<circle class="f3" cx="80.2" cy="276.1" r="3"/>
+<circle class="f3" cx="101.8" cy="279.1" r="3"/>
+<circle class="f3" cx="123.2" cy="276.5" r="3"/>
+<circle class="f3" cx="144.8" cy="269.6" r="3"/>
+<circle class="f3" cx="166.2" cy="270.0" r="3"/>
+<circle class="f3" cx="187.8" cy="274.9" r="3"/>
+<circle class="f3" cx="209.2" cy="267.7" r="3"/>
+<circle class="f3" cx="230.7" cy="259.3" r="3"/>
+<circle class="f3" cx="252.2" cy="257.4" r="3"/>
+<circle class="f3" cx="273.8" cy="262.2" r="3"/>
+<circle class="f3" cx="295.2" cy="260.6" r="3"/>
+<circle class="f3" cx="316.8" cy="255.2" r="3"/>
+<circle class="f3" cx="338.2" cy="259.9" r="3"/>
+<circle class="f3" cx="359.8" cy="266.2" r="3"/>
+<circle class="f3" cx="381.2" cy="261.5" r="3"/>
+<circle class="f3" cx="402.8" cy="247.1" r="3"/>
+<circle class="f3" cx="424.2" cy="256.8" r="3"/>
+<circle class="f3" cx="445.8" cy="260.9" r="3"/>
+<circle class="f3" cx="467.2" cy="239.2" r="3"/>
+<circle class="f3" cx="488.7" cy="234.7" r="3"/>
+<circle class="f3" cx="510.3" cy="242.2" r="3"/>
+<circle class="f3" cx="531.8" cy="244.3" r="3"/>
+<circle class="f3" cx="553.2" cy="227.6" r="3"/>
+<circle class="f3" cx="574.8" cy="227.7" r="3"/>
+<text class="ink" x="582.8" y="94.9">persistence</text>
+<text class="ink" x="582.8" y="146.6">climatology</text>
+<text class="ink" x="582.8" y="231.7">emos-ecc</text>
+<text class="ink" x="582.8" y="246.7">raw</text>
 </svg>

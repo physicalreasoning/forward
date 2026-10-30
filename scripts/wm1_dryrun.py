@@ -220,7 +220,8 @@ def report(res: dict) -> str:
         "",
         "## Energy score (primary) and variogram score, by window",
         "",
-        "Rows are (read, station) pairs whose whole window has verified. Windows with no rows yet "
+        "Rows are (read, station) pairs whose window has verified, with truth for at least 95% of its "
+        "hours (scored on those hours, the same for every entry). Windows with no rows yet "
         "are listed so the gap is visible. With one read an interval collapses to a point and with "
         "two or three it is not a measure of uncertainty; they are printed to exercise the code.",
         "",
@@ -318,13 +319,14 @@ FINDINGS = """## Findings (about the pipeline)
    verified before the init: none for the first read (raw mixture mean and variance), one day of
    day-1 leads for the second. Longer lead blocks reuse the longest fitted block. With a few
    weeks of captures each block gets its own fit.
-4. **A single missing hour drops a whole window.** In the first run (truth to 2026-10-27
-   00:00 UTC) KBOS lacked a report within ten minutes of one or two hours on each of the first
-   three reads' first day (KOKC once), so 53 of 57 (read, station) rows have a complete 24 h
-   window. At that rate a 168 h window at KBOS will almost never be complete. Before WM-1 is
-   frozen, decide between scoring the energy and variogram scores on the observed hours only
-   (the same hours for every entry; still proper if missingness does not depend on the
-   forecasts) and the current all-or-nothing rule.
+4. **Missing truth hours: decided.** In the first run (truth to 2026-10-27 00:00 UTC) KBOS
+   lacked a report within ten minutes of one or two hours on each of the first three reads'
+   first day (KOKC once), so under an all-or-nothing rule 53 of 57 (read, station) rows had a
+   complete 24 h window, and a 168 h window at KBOS would almost never be complete. Decided
+   2026-10-29, before WM-1 is frozen: a row is scored if truth exists for at least 95% of its
+   window's hours, on those hours only (the same hours for every entry; still proper if
+   missingness does not depend on the forecasts). The allowance is for truth only: a missing
+   forecast hour still drops the row for every entry, so no entry can choose its scored hours.
 5. **The hash chain works end to end.** Every capture's sha256 matched its ledger manifest
    before any entry ran; every entry's code matched its manifest; each forecast's sha256 is in
    `results/wm/wm1_dryrun.json` with the manifest and code hashes of the entry that made it."""
