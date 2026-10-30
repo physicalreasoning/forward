@@ -110,7 +110,9 @@ hourly ASOS truth for hours strictly before `init_time`, `inputs.ensembles(day)`
 on or before the init day (the init day's only if captured before 22:00 UTC), and any later
 request, or a source the manifest did not declare, raises `LeakageError`. While `predict` runs,
 network connections, subprocesses and opening files under the data directories are refused too.
-NaN means no forecast; a NaN in a scored window drops that row for every entry.
+NaN means no forecast; a NaN in a scored window drops that row for every entry. Missing truth
+is allowed for up to 5% of a window's hours: the energy and variogram scores are then computed on
+the hours with truth, the same hours for every entry (`forward/wm/evaluate.py`, `MIN_COVERAGE`).
 
 The runner (`forward/wm/runner.py`) refuses an entry whose code or weights differ from its
 manifest, and, for a sealed round, one whose files were committed after the window's first init
