@@ -22,6 +22,8 @@ import gzip
 import io
 import re
 import struct
+import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass
@@ -51,6 +53,21 @@ def url(time, product: str = PRODUCT) -> str:
     return f"{BUCKET}/{key(time, product)}"
 
 
+def _read(u: str, timeout: int = 60, tries: int = 4) -> bytes:
+    """GET with retries on network errors (not on HTTP errors: a 404 is an answer)."""
+    for i in range(tries):
+        try:
+            with urllib.request.urlopen(u, timeout=timeout) as r:
+                return r.read()
+        except urllib.error.HTTPError:
+            raise
+        except (urllib.error.URLError, TimeoutError, ConnectionError):
+            if i == tries - 1:
+                raise
+            time.sleep(2**i)
+    raise AssertionError("unreachable")
+
+
 def list_day(day, product: str = PRODUCT) -> dict[pd.Timestamp, dict]:
     """{valid time: {"key", "size", "etag"}} for every file of a UTC day in the bucket."""
     d = pd.Timestamp(day)
@@ -60,8 +77,7 @@ def list_day(day, product: str = PRODUCT) -> dict[pd.Timestamp, dict]:
         q = {"list-type": "2", "prefix": prefix}
         if token:
             q["continuation-token"] = token
-        with urllib.request.urlopen(f"{BUCKET}/?{urllib.parse.urlencode(q)}", timeout=60) as r:
-            x = r.read().decode()
+        x = _read(f"{BUCKET}/?{urllib.parse.urlencode(q)}").decode()
         for k, etag, size in re.findall(
             r"<Key>(.*?)</Key>.*?<ETag>(.*?)</ETag>.*?<Size>(\d+)</Size>", x, flags=re.S
         ):
@@ -77,8 +93,7 @@ def list_day(day, product: str = PRODUCT) -> dict[pd.Timestamp, dict]:
 
 def fetch(time, product: str = PRODUCT, timeout: int = 60) -> bytes:
     """The gzipped GRIB2 bytes of one file (raises urllib's HTTPError if it does not exist)."""
-    with urllib.request.urlopen(url(time, product), timeout=timeout) as r:
-        return r.read()
+    return _read(url(time, product), timeout=timeout)
 
 
 def _sm(b: bytes) -> int:
