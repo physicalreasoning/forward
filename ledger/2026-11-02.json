@@ -1,0 +1,617 @@
+{
+ "captured_at": "2026-11-02T20:05:50+00:00",
+ "models": {
+  "aifs": "ecmwf_aifs025_single",
+  "ifs": "ecmwf_ifs025",
+  "gfs": "gfs_global",
+  "icon": "icon_global",
+  "nbm": "ncep_nbm_conus"
+ },
+ "rows": [
+  {
+   "station": "NY",
+   "day": "2026-11-03",
+   "aifs": 68.8,
+   "ifs": 67.3,
+   "gfs": 68.2,
+   "icon": 67.7,
+   "nbm": 68.5
+  },
+  {
+   "station": "CHI",
+   "day": "2026-11-03",
+   "aifs": 69.1,
+   "ifs": 73.2,
+   "gfs": 70.2,
+   "icon": 71.5,
+   "nbm": 73.5
+  },
+  {
+   "station": "MIA",
+   "day": "2026-11-03",
+   "aifs": 81.0,
+   "ifs": 80.9,
+   "gfs": 85.1,
+   "icon": 83.4,
+   "nbm": 83.0
+  },
+  {
+   "station": "AUS",
+   "day": "2026-11-03",
+   "aifs": 74.5,
+   "ifs": 80.0,
+   "gfs": 79.9,
+   "icon": 77.4,
+   "nbm": 75.1
+  },
+  {
+   "station": "LAX",
+   "day": "2026-11-03",
+   "aifs": 73.2,
+   "ifs": 73.3,
+   "gfs": 71.4,
+   "icon": 74.3,
+   "nbm": 71.2
+  },
+  {
+   "station": "DEN",
+   "day": "2026-11-03",
+   "aifs": 51.3,
+   "ifs": 55.1,
+   "gfs": 54.6,
+   "icon": 53.4,
+   "nbm": 52.0
+  },
+  {
+   "station": "PHIL",
+   "day": "2026-11-03",
+   "aifs": 69.7,
+   "ifs": 68.3,
+   "gfs": 69.3,
+   "icon": 68.7,
+   "nbm": 70.1
+  },
+  {
+   "station": "ATL",
+   "day": "2026-11-03",
+   "aifs": 66.5,
+   "ifs": 72.3,
+   "gfs": 73.9,
+   "icon": 69.3,
+   "nbm": 73.7
+  },
+  {
+   "station": "BOS",
+   "day": "2026-11-03",
+   "aifs": 67.4,
+   "ifs": 69.6,
+   "gfs": 68.9,
+   "icon": 69.6,
+   "nbm": 68.2
+  },
+  {
+   "station": "DAL",
+   "day": "2026-11-03",
+   "aifs": 71.1,
+   "ifs": 71.0,
+   "gfs": 75.0,
+   "icon": 73.7,
+   "nbm": 72.0
+  },
+  {
+   "station": "DC",
+   "day": "2026-11-03",
+   "aifs": 71.0,
+   "ifs": 70.5,
+   "gfs": 72.8,
+   "icon": 70.7,
+   "nbm": 72.3
+  },
+  {
+   "station": "LV",
+   "day": "2026-11-03",
+   "aifs": 66.3,
+   "ifs": 66.4,
+   "gfs": 66.5,
+   "icon": 63.4,
+   "nbm": 64.7
+  },
+  {
+   "station": "MIN",
+   "day": "2026-11-03",
+   "aifs": 63.8,
+   "ifs": 62.8,
+   "gfs": 64.6,
+   "icon": 63.6,
+   "nbm": 63.3
+  },
+  {
+   "station": "NOLA",
+   "day": "2026-11-03",
+   "aifs": 78.7,
+   "ifs": 79.6,
+   "gfs": 83.8,
+   "icon": 79.8,
+   "nbm": 81.1
+  },
+  {
+   "station": "OKC",
+   "day": "2026-11-03",
+   "aifs": 62.1,
+   "ifs": 63.8,
+   "gfs": 67.0,
+   "icon": 66.2,
+   "nbm": 63.7
+  },
+  {
+   "station": "PHX",
+   "day": "2026-11-03",
+   "aifs": 75.7,
+   "ifs": 73.5,
+   "gfs": 77.3,
+   "icon": 77.0,
+   "nbm": 74.8
+  },
+  {
+   "station": "SATX",
+   "day": "2026-11-03",
+   "aifs": 74.3,
+   "ifs": 80.3,
+   "gfs": 78.3,
+   "icon": 78.7,
+   "nbm": 75.9
+  },
+  {
+   "station": "SEA",
+   "day": "2026-11-03",
+   "aifs": 54.9,
+   "ifs": 54.0,
+   "gfs": 55.7,
+   "icon": 53.6,
+   "nbm": 56.7
+  },
+  {
+   "station": "SFO",
+   "day": "2026-11-03",
+   "aifs": 63.0,
+   "ifs": 65.3,
+   "gfs": 63.6,
+   "icon": 64.8,
+   "nbm": 62.9
+  }
+ ],
+ "isotherm": {
+  "url": "https://isotherm.onrender.com",
+  "health": {
+   "status": "ok",
+   "model_hash": "b200c51ce4ee",
+   "fit_before": "2026-06-29",
+   "model": "pool \u00b7 market+GFS",
+   "cities": [
+    "AUS",
+    "CHI",
+    "DEN",
+    "LAX",
+    "MIA",
+    "NY",
+    "PHIL"
+   ]
+  },
+  "rows": [
+   {
+    "station": "NY",
+    "day": "2026-11-03",
+    "fetched_at": "2026-11-02T20:06:57+00:00",
+    "response": {
+     "city": "NY",
+     "day": "2026-11-03",
+     "event": "KXHIGHNY-26NOV03",
+     "gfs_fcst": 69.0,
+     "gfs_runtime": "2026-11-02 12:00:00+00:00",
+     "disagreement": 0.00553,
+     "buckets": [
+      {
+       "ticker": "KXHIGHNY-26NOV03-T66",
+       "lo": null,
+       "hi": 65.5,
+       "p_forecast": 0.09311409832894951,
+       "p_model": 0.01538177473734152
+      },
+      {
+       "ticker": "KXHIGHNY-26NOV03-B66.5",
+       "lo": 65.5,
+       "hi": 67.5,
+       "p_forecast": 0.1599840450752818,
+       "p_model": 0.2085793883918736
+      },
+      {
+       "ticker": "KXHIGHNY-26NOV03-B68.5",
+       "lo": 67.5,
+       "hi": 69.5,
+       "p_forecast": 0.24382027841755027,
+       "p_model": 0.5675147803559384
+      },
+      {
+       "ticker": "KXHIGHNY-26NOV03-B70.5",
+       "lo": 69.5,
+       "hi": 71.5,
+       "p_forecast": 0.2450168246320138,
+       "p_model": 0.19529157631639296
+      },
+      {
+       "ticker": "KXHIGHNY-26NOV03-B72.5",
+       "lo": 71.5,
+       "hi": 73.5,
+       "p_forecast": 0.1623515089091785,
+       "p_model": 0.010472894440801492
+      },
+      {
+       "ticker": "KXHIGHNY-26NOV03-T73",
+       "lo": 73.5,
+       "hi": null,
+       "p_forecast": 0.09571324463702613,
+       "p_model": 0.002759585757652004
+      }
+     ]
+    }
+   },
+   {
+    "station": "CHI",
+    "day": "2026-11-03",
+    "fetched_at": "2026-11-02T20:06:59+00:00",
+    "response": {
+     "city": "CHI",
+     "day": "2026-11-03",
+     "event": "KXHIGHCHI-26NOV03",
+     "gfs_fcst": 75.0,
+     "gfs_runtime": "2026-11-02 12:00:00+00:00",
+     "disagreement": 0.00594,
+     "buckets": [
+      {
+       "ticker": "KXHIGHCHI-26NOV03-T71",
+       "lo": null,
+       "hi": 70.5,
+       "p_forecast": 0.0809336794511219,
+       "p_model": 0.07454800822954663
+      },
+      {
+       "ticker": "KXHIGHCHI-26NOV03-B71.5",
+       "lo": 70.5,
+       "hi": 72.5,
+       "p_forecast": 0.12650887537850602,
+       "p_model": 0.39729800358392026
+      },
+      {
+       "ticker": "KXHIGHCHI-26NOV03-B73.5",
+       "lo": 72.5,
+       "hi": 74.5,
+       "p_forecast": 0.20089034691974494,
+       "p_model": 0.46128134739465193
+      },
+      {
+       "ticker": "KXHIGHCHI-26NOV03-B75.5",
+       "lo": 74.5,
+       "hi": 76.5,
+       "p_forecast": 0.22911901830368886,
+       "p_model": 0.04542426220143637
+      },
+      {
+       "ticker": "KXHIGHCHI-26NOV03-B77.5",
+       "lo": 76.5,
+       "hi": 78.5,
+       "p_forecast": 0.18769199844487905,
+       "p_model": 0.008535207368028297
+      },
+      {
+       "ticker": "KXHIGHCHI-26NOV03-T78",
+       "lo": 78.5,
+       "hi": null,
+       "p_forecast": 0.17485608150205922,
+       "p_model": 0.01291317122241641
+      }
+     ]
+    }
+   },
+   {
+    "station": "MIA",
+    "day": "2026-11-03",
+    "fetched_at": "2026-11-02T20:07:02+00:00",
+    "response": {
+     "city": "MIA",
+     "day": "2026-11-03",
+     "event": "KXHIGHMIA-26NOV03",
+     "gfs_fcst": 86.0,
+     "gfs_runtime": "2026-11-02 12:00:00+00:00",
+     "disagreement": 0.01645,
+     "buckets": [
+      {
+       "ticker": "KXHIGHMIA-26NOV03-T81",
+       "lo": null,
+       "hi": 80.5,
+       "p_forecast": 0.0020149998378520212,
+       "p_model": 0.0008336068001085927
+      },
+      {
+       "ticker": "KXHIGHMIA-26NOV03-B81.5",
+       "lo": 80.5,
+       "hi": 82.5,
+       "p_forecast": 0.02937069439123901,
+       "p_model": 0.01030022336757454
+      },
+      {
+       "ticker": "KXHIGHMIA-26NOV03-B83.5",
+       "lo": 82.5,
+       "hi": 84.5,
+       "p_forecast": 0.16744346686491735,
+       "p_model": 0.1385377165249333
+      },
+      {
+       "ticker": "KXHIGHMIA-26NOV03-B85.5",
+       "lo": 84.5,
+       "hi": 86.5,
+       "p_forecast": 0.3683455981498366,
+       "p_model": 0.7313141738737726
+      },
+      {
+       "ticker": "KXHIGHMIA-26NOV03-B87.5",
+       "lo": 86.5,
+       "hi": 88.5,
+       "p_forecast": 0.31465480764934406,
+       "p_model": 0.11625389920106736
+      },
+      {
+       "ticker": "KXHIGHMIA-26NOV03-T88",
+       "lo": 88.5,
+       "hi": null,
+       "p_forecast": 0.11817043310681097,
+       "p_model": 0.0027603802325436564
+      }
+     ]
+    }
+   },
+   {
+    "station": "AUS",
+    "day": "2026-11-03",
+    "fetched_at": "2026-11-02T20:07:04+00:00",
+    "response": {
+     "city": "AUS",
+     "day": "2026-11-03",
+     "event": "KXHIGHAUS-26NOV03",
+     "gfs_fcst": 83.0,
+     "gfs_runtime": "2026-11-02 12:00:00+00:00",
+     "disagreement": 0.04867,
+     "buckets": [
+      {
+       "ticker": "KXHIGHAUS-26NOV03-T73",
+       "lo": null,
+       "hi": 72.5,
+       "p_forecast": 0.0020458976752495256,
+       "p_model": 0.0009103408299696636
+      },
+      {
+       "ticker": "KXHIGHAUS-26NOV03-B73.5",
+       "lo": 72.5,
+       "hi": 74.5,
+       "p_forecast": 0.007808998386947704,
+       "p_model": 0.0013498189283969182
+      },
+      {
+       "ticker": "KXHIGHAUS-26NOV03-B75.5",
+       "lo": 74.5,
+       "hi": 76.5,
+       "p_forecast": 0.026658983370685778,
+       "p_model": 0.006292600909567987
+      },
+      {
+       "ticker": "KXHIGHAUS-26NOV03-B77.5",
+       "lo": 76.5,
+       "hi": 78.5,
+       "p_forecast": 0.06850032878252518,
+       "p_model": 0.06695268019492882
+      },
+      {
+       "ticker": "KXHIGHAUS-26NOV03-B79.5",
+       "lo": 78.5,
+       "hi": 80.5,
+       "p_forecast": 0.1325012473702843,
+       "p_model": 0.3917896723697456
+      },
+      {
+       "ticker": "KXHIGHAUS-26NOV03-T80",
+       "lo": 80.5,
+       "hi": null,
+       "p_forecast": 0.7624845444143076,
+       "p_model": 0.5327048867673909
+      }
+     ]
+    }
+   },
+   {
+    "station": "LAX",
+    "day": "2026-11-03",
+    "fetched_at": "2026-11-02T20:07:06+00:00",
+    "response": {
+     "city": "LAX",
+     "day": "2026-11-03",
+     "event": "KXHIGHLAX-26NOV03",
+     "gfs_fcst": 72.0,
+     "gfs_runtime": "2026-11-02 12:00:00+00:00",
+     "disagreement": 0.00526,
+     "buckets": [
+      {
+       "ticker": "KXHIGHLAX-26NOV03-T69",
+       "lo": null,
+       "hi": 68.5,
+       "p_forecast": 0.11109727016128929,
+       "p_model": 0.0030975761053284676
+      },
+      {
+       "ticker": "KXHIGHLAX-26NOV03-B69.5",
+       "lo": 68.5,
+       "hi": 70.5,
+       "p_forecast": 0.15618064107578633,
+       "p_model": 0.011123955934964926
+      },
+      {
+       "ticker": "KXHIGHLAX-26NOV03-B71.5",
+       "lo": 70.5,
+       "hi": 72.5,
+       "p_forecast": 0.22417751343585363,
+       "p_model": 0.04019345589680867
+      },
+      {
+       "ticker": "KXHIGHLAX-26NOV03-B73.5",
+       "lo": 72.5,
+       "hi": 74.5,
+       "p_forecast": 0.22698918919560496,
+       "p_model": 0.6781298283823597
+      },
+      {
+       "ticker": "KXHIGHLAX-26NOV03-B75.5",
+       "lo": 74.5,
+       "hi": 76.5,
+       "p_forecast": 0.1621319668536988,
+       "p_model": 0.24967521892650676
+      },
+      {
+       "ticker": "KXHIGHLAX-26NOV03-T76",
+       "lo": 76.5,
+       "hi": null,
+       "p_forecast": 0.119423419277767,
+       "p_model": 0.017779964754031475
+      }
+     ]
+    }
+   },
+   {
+    "station": "DEN",
+    "day": "2026-11-03",
+    "fetched_at": "2026-11-02T20:07:09+00:00",
+    "response": {
+     "city": "DEN",
+     "day": "2026-11-03",
+     "event": "KXHIGHDEN-26NOV03",
+     "gfs_fcst": 55.0,
+     "gfs_runtime": "2026-11-02 12:00:00+00:00",
+     "disagreement": 0.01075,
+     "buckets": [
+      {
+       "ticker": "KXHIGHDEN-26NOV03-T55",
+       "lo": null,
+       "hi": 54.5,
+       "p_forecast": 0.4572665479129019,
+       "p_model": 0.2727594751420326
+      },
+      {
+       "ticker": "KXHIGHDEN-26NOV03-B55.5",
+       "lo": 54.5,
+       "hi": 56.5,
+       "p_forecast": 0.18499140213895326,
+       "p_model": 0.48692788601348985
+      },
+      {
+       "ticker": "KXHIGHDEN-26NOV03-B57.5",
+       "lo": 56.5,
+       "hi": 58.5,
+       "p_forecast": 0.15625574691731148,
+       "p_model": 0.21315779445500027
+      },
+      {
+       "ticker": "KXHIGHDEN-26NOV03-B59.5",
+       "lo": 58.5,
+       "hi": 60.5,
+       "p_forecast": 0.10607464447425485,
+       "p_model": 0.0168149798059576
+      },
+      {
+       "ticker": "KXHIGHDEN-26NOV03-B61.5",
+       "lo": 60.5,
+       "hi": 62.5,
+       "p_forecast": 0.057871282528519696,
+       "p_model": 0.008135147481879384
+      },
+      {
+       "ticker": "KXHIGHDEN-26NOV03-T62",
+       "lo": 62.5,
+       "hi": null,
+       "p_forecast": 0.03754037602805882,
+       "p_model": 0.0022047171016402922
+      }
+     ]
+    }
+   },
+   {
+    "station": "PHIL",
+    "day": "2026-11-03",
+    "fetched_at": "2026-11-02T20:07:11+00:00",
+    "response": {
+     "city": "PHIL",
+     "day": "2026-11-03",
+     "event": "KXHIGHPHIL-26NOV03",
+     "gfs_fcst": 69.0,
+     "gfs_runtime": "2026-11-02 12:00:00+00:00",
+     "disagreement": 0.0054,
+     "buckets": [
+      {
+       "ticker": "KXHIGHPHIL-26NOV03-T69",
+       "lo": null,
+       "hi": 68.5,
+       "p_forecast": 0.3718096643656449,
+       "p_model": 0.055679273104074105
+      },
+      {
+       "ticker": "KXHIGHPHIL-26NOV03-B69.5",
+       "lo": 68.5,
+       "hi": 70.5,
+       "p_forecast": 0.25740515931046415,
+       "p_model": 0.29726577291024386
+      },
+      {
+       "ticker": "KXHIGHPHIL-26NOV03-B71.5",
+       "lo": 70.5,
+       "hi": 72.5,
+       "p_forecast": 0.20886903039008964,
+       "p_model": 0.6042565964978407
+      },
+      {
+       "ticker": "KXHIGHPHIL-26NOV03-B73.5",
+       "lo": 72.5,
+       "hi": 74.5,
+       "p_forecast": 0.11177141267064872,
+       "p_model": 0.039100755158770546
+      },
+      {
+       "ticker": "KXHIGHPHIL-26NOV03-B75.5",
+       "lo": 74.5,
+       "hi": 76.5,
+       "p_forecast": 0.03942885286477926,
+       "p_model": 0.002198690838126815
+      },
+      {
+       "ticker": "KXHIGHPHIL-26NOV03-T76",
+       "lo": 76.5,
+       "hi": null,
+       "p_forecast": 0.010715880398373345,
+       "p_model": 0.0014989114909439844
+      }
+     ]
+    }
+   }
+  ],
+  "health_after": {
+   "status": "ok",
+   "model_hash": "b200c51ce4ee",
+   "fit_before": "2026-06-29",
+   "model": "pool \u00b7 market+GFS",
+   "cities": [
+    "AUS",
+    "CHI",
+    "DEN",
+    "LAX",
+    "MIA",
+    "NY",
+    "PHIL"
+   ]
+  }
+ }
+}
