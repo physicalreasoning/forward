@@ -1,0 +1,64 @@
+{
+ "captured_at": "2026-11-19T20:09:59+00:00",
+ "models": {
+  "aifs_ens": {
+   "open_meteo": "ecmwf_aifs025",
+   "last_run_initialisation_time": 1795068000,
+   "last_run_availability_time": 1795102001,
+   "members": 51
+  },
+  "ifs_ens": {
+   "open_meteo": "ecmwf_ifs025",
+   "last_run_initialisation_time": 1795068000,
+   "last_run_availability_time": 1795103576,
+   "members": 51
+  },
+  "gefs": {
+   "open_meteo": "gfs025",
+   "last_run_initialisation_time": 1795089600,
+   "last_run_availability_time": 1795110194,
+   "members": 31
+  },
+  "icon_eps": {
+   "open_meteo": "icon_global",
+   "members": 40
+  },
+  "geps": {
+   "open_meteo": "gem_global",
+   "last_run_initialisation_time": 1795089600,
+   "last_run_availability_time": 1795113169,
+   "members": 21
+  },
+  "mogreps_g": {
+   "open_meteo": "ukmo_global_ensemble_20km",
+   "last_run_initialisation_time": 1795068000,
+   "last_run_availability_time": 1795102874,
+   "members": 18
+  }
+ },
+ "errors": {},
+ "file": "wm-2026-11-19.parquet",
+ "sha256": "83df66a64405364188d49707101bbdb642e22dca30ad46261adbfe00fc85d7c5",
+ "rows": 773376,
+ "stations": [
+  "ATL",
+  "AUS",
+  "BOS",
+  "CHI",
+  "DAL",
+  "DC",
+  "DEN",
+  "LAX",
+  "LV",
+  "MIA",
+  "MIN",
+  "NOLA",
+  "NY",
+  "OKC",
+  "PHIL",
+  "PHX",
+  "SATX",
+  "SEA",
+  "SFO"
+ ]
+}
